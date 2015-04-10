@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Forbes Databases
+ * Plugin Name: Library Databases
  * Description: Adds a custom post type 'forbes_databases'. To include a list of databases on a page use the shortcode [forbes_database_list], optionally with the research_area parameter, e.g. [forbes_database_list research_area="business"].
  * Version: 0.1
  * Author: Benjamin Kalish

@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin interface for the Forbes Databases plugin.
+ * Admin interface for the Library Databases plugin.
  */
 
 /**

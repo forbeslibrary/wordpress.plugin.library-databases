@@ -1,8 +1,7 @@
 <?php
 /**
- * Helper functions for the Forbes Databases plugin.
+ * Helper functions for the Library Databases plugin.
  */
-
 
 /**
  * Returns the URL of the availability icon.

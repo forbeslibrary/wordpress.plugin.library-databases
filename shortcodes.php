@@ -1,8 +1,8 @@
 <?php
 /**
- * Shortcodes for the Forbes Databases plugin.
+ * Shortcodes for the Library Databases plugin.
  */
- 
+
 /**
  * A shortcode for listing forbes_databases.
  *
@@ -11,8 +11,8 @@
 function forbes_database_list_shortcode_handler( $atts, $content = null ) {
   if (is_search()) { return ''; }
   $the_query = forbes_databases_query($atts);
-  
-  ob_start(); 
+
+  ob_start();
   if ( $the_query->have_posts() ) {
     while ( $the_query->have_posts() ) {
       $the_query->the_post();
@@ -34,7 +34,7 @@ function forbes_database_list_shortcode_handler( $atts, $content = null ) {
 function forbes_database_select_shortcode_handler( $atts, $content = null ) {
   if (is_search()) { return ''; }
   $the_query = forbes_databases_query($atts);
-  
+
   $menu_data = array();
 
   if ( $the_query->have_posts() ) {
@@ -87,9 +87,9 @@ function forbes_database_select_shortcode_handler( $atts, $content = null ) {
  */
 function forbes_database_feature_shortcode_handler( $atts, $content = null ) {
   $the_query = forbes_databases_query($atts);
-  
+
   $featured_posts = array();
-  
+
   if ( $the_query->have_posts() ) {
     while ( $the_query->have_posts() ) {
       $the_query->the_post();
@@ -98,13 +98,12 @@ function forbes_database_feature_shortcode_handler( $atts, $content = null ) {
       }
     }
   }
-  
+
   ob_start();
   ?>
   <a href="<?php echo get_permalink( $featured_posts[0]->ID ) ?>">
       <?php echo get_the_post_thumbnail( $featured_posts[0]->ID ); ?>
   </a><?php
 
-  return ob_get_clean();  
+  return ob_get_clean();
 }
-
