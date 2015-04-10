@@ -1,9 +1,11 @@
 <?php
 /**
  * Plugin Name: Library Databases
- * Description: Adds a custom post type 'forbes_databases'. To include a list of databases on a page use the shortcode [forbes_database_list], optionally with the research_area parameter, e.g. [forbes_database_list research_area="business"].
- * Version: 0.1
+ * Plugin URI: https://github.com/forbeslibrary/wordpress.plugin.library-databases
  * Author: Benjamin Kalish
+ * Author URI: https://github.com/bkalish
+ * Description: Provides easy access to and organization of a library databases and other electronic resources on the web.
+ * Version: 0.1
  */
 
 require_once( dirname( __FILE__ ) . '/helpers.php' );
