@@ -120,6 +120,16 @@ function forbes_databases_admin_css() {
     #dashboard_right_now .forbes_databases-count span:before {
       content: "\f319";
     }
+    .taxonomy-forbes_database_categories .form-field .label {
+      font-weight: bold;
+    }
+    .taxonomy-forbes_database_categories .form-wrap .form-field {
+      margin: 0 0 0.25em;
+      padding: 0;
+    }
+    .taxonomy-forbes_database_categories #tag-description {
+      height: 4em;
+    }
   </style>
   <?php
 }
@@ -234,6 +244,34 @@ function forbes_databases_editbox_database_urls(){
   <input name="database_main_url" value="<?php echo $database_main_url; ?>" />
   <label><?php echo __('Home Use URL (if different)'); ?>:</label>
   <input name="database_home_use_url" value="<?php echo $database_home_use_url; ?>" />
+  <?php
+}
+
+/**
+ * Returns the html for the custom fields in the new database access category box
+ */
+function forbes_database_categories_custom_fields(){
+  ?>
+  <div class="form-field">
+    <label>
+      <div class="label">
+        <?php _e('Image'); ?>
+      </div>
+      <input type="file" name="term_meta[image]"/>
+    </label>
+  </div>
+  <div class="form-field">
+    <div class="label">
+      <?php _e('Access Restrictions'); ?>
+    </div>
+    <label>
+      <input type="checkbox" name="term_meta[library_use_only]"/>
+      <?php _e('In Library Only'); ?>
+      <p>
+        <?php _e('(set library IP addresses under Settings > Library Databases)'); ?>
+      </p>
+    </label>
+  </div>
   <?php
 }
 

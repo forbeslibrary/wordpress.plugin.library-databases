@@ -27,6 +27,8 @@ add_action('manage_forbes_databases_posts_custom_column', 'forbes_databases_cust
 add_action('admin_head', 'forbes_databases_admin_css' );
 add_action('wp_head', 'forbes_databases_public_css');
 add_action('dashboard_glance_items', 'forbes_databases_add_glance_items');
+add_action('forbes_database_categories_add_form_fields', 'forbes_database_categories_custom_fields');
+
 
 // filter hooks
 add_filter('manage_forbes_databases_posts_columns', 'forbes_databases_manage_columns');
@@ -48,7 +50,7 @@ function forbes_databases_flush_rewrites() {
 }
 
 /**
- * Registers the custom post type forbes_databases and the custom taxonomy research-area.
+ * Registers the custom post type forbes_databases and the custom taxonomies.
  *
  * @wp-hook init
  */
@@ -82,7 +84,38 @@ function forbes_databases_init() {
   );
 
   register_post_type( 'forbes_databases' , $args );
-  register_taxonomy("research-area", array("forbes_databases"), array("label" => "Research Areas", "singular_label" => "Research Area", 'hierarchical'=>True, 'show_ui'=>True));
+
+  register_taxonomy(
+    'research-area',
+    array('forbes_databases'),
+    array(
+      'label' => 'Research Areas',
+      'singular_label' => 'Research Area',
+      'hierarchical' => True,
+      'show_ui' => True
+    )
+  );
+
+  register_taxonomy(
+    'forbes_database_categories',
+    'forbes_databases',
+    array(
+      'label' => 'Access Categories',
+      'labels' => array(
+        'singular_label' => 'Access Category',
+        'add_new_item' => 'Add Access Category',
+        'edit_item' => 'Edit Access Category',
+      ),
+      'hierarchical' => False,
+      'show_ui' => True,
+      'capabilities' => array(
+        'manage_terms' => 'manage_options', // by default only admin
+        'edit_terms' => 'manage_options',
+        'delete_terms' => 'manage_options',
+        'assign_terms' => 'edit_posts'  // means administrator', 'editor', 'author', 'contributor'
+      )
+    )
+  );
 
 }
 
