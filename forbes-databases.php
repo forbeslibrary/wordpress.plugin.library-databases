@@ -5,7 +5,7 @@
  * Author: Benjamin Kalish
  * Author URI: https://github.com/bkalish
  * Description: Provides easy access to and organization of a library databases and other electronic resources on the web.
- * Version: 0.1
+ * Version: 1.0.0-dev
  */
 
 require_once( dirname( __FILE__ ) . '/helpers.php' );
