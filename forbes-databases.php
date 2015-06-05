@@ -14,6 +14,9 @@ if ( is_admin() ) {
   require_once(dirname( __FILE__ ) . '/admin.php');
 }
 
+// activation hooks
+register_activation_hook(__FILE__, 'forbes_databases_flush_rewrites');
+
 // action hooks
 add_action('init', 'forbes_databases_init');
 add_action('admin_init', 'forbes_databases_admin_init');
@@ -33,6 +36,16 @@ add_filter('single_template', 'forbes_database_single_template');
 add_shortcode( 'forbes_database_list', 'forbes_database_list_shortcode_handler' );
 add_shortcode( 'forbes_database_feature', 'forbes_database_feature_shortcode_handler' );
 add_shortcode( 'forbes_database_select', 'forbes_database_select_shortcode_handler' );
+
+/**
+ * Flush rewrite rules on plugin activation
+ *
+ * This is registered with register_activation_hook for this file
+ */
+function forbes_databases_flush_rewrites() {
+  forbes_databases_init();
+  flush_rewrite_rules();
+}
 
 /**
  * Registers the custom post type forbes_databases and the custom taxonomy research-area.
