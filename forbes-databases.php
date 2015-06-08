@@ -50,11 +50,19 @@ function forbes_databases_flush_rewrites() {
 }
 
 /**
- * Registers the custom post type forbes_databases and the custom taxonomies.
+ * Initializes the plugin.
  *
  * @wp-hook init
  */
 function forbes_databases_init() {
+  forbes_databases_register_custom_post_types();
+  forbes_databases_register_custom_taxonomies();
+}
+
+/**
+ * Registers the custom post type forbes_databases
+*/
+function forbes_databases_register_custom_post_types() {
   $labels = array(
     'name' => _x('Databases', 'post type general name'),
     'singular_name' => _x('Database', 'post type singular name'),
@@ -84,7 +92,9 @@ function forbes_databases_init() {
   );
 
   register_post_type( 'forbes_databases' , $args );
+}
 
+function forbes_databases_register_custom_taxonomies() {
   register_taxonomy(
     'research-area',
     array('forbes_databases'),
@@ -116,7 +126,6 @@ function forbes_databases_init() {
       )
     )
   );
-
 }
 
 /**
