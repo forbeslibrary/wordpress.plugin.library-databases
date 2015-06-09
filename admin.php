@@ -327,3 +327,5 @@ class Library_Databases_Plugin_Admin {
     <?php
   }
 }
+
+new Library_Databases_Plugin_Admin();
