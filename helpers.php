@@ -34,6 +34,8 @@ function forbes_databases_get_availability_text($post) {
     case 'in-library':
       $text = "Provided by Forbes Library and available for use in the library.";
       break;
+    default:
+      $text = '';
   }
   return $text;
 }
