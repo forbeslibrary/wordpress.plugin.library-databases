@@ -9,8 +9,6 @@
  */
 
 class Library_Databases_Plugin {
-  private $admin;
-
   function __construct() {
     $this->load_dependencies();
     register_activation_hook(__FILE__, array($this, 'flush_rewrites'));
