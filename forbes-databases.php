@@ -14,6 +14,7 @@ class Library_Databases_Plugin {
   function __construct() {
     $this->load_dependencies();
     register_activation_hook(__FILE__, array($this, 'flush_rewrites'));
+    register_activation_hook(__FILE__, array($this, 'update'));
     $this->add_actions();
     $this->add_filters();
     $this->add_shortcodes();
@@ -66,6 +67,19 @@ class Library_Databases_Plugin {
   }
 
   /**
+   * Update the plugin
+   */
+  function update() {
+    ob_start();
+    require_once( dirname( __FILE__ ) . '/update.php' );
+    $update_tool = new Library_Databases_Update_Tool();
+    $update_tool->update();
+    $output = ob_get_contents();
+    ob_clean();
+    error_log($output);
+  }
+
+  /**
    * Initializes the plugin.
    *
    * @wp-hook init
@@ -73,7 +87,6 @@ class Library_Databases_Plugin {
   function init() {
     $this->register_custom_post_types();
     $this->register_custom_taxonomies();
-    forbes_databases_migrate();
   }
 
   /**
@@ -220,56 +233,3 @@ class Library_Databases_Plugin {
   }
 }
 new Library_Databases_Plugin();
-
-/**
- * Migrate data from earlier versions
- */
-function forbes_databases_migrate() {
-  global $post;
-  $version = get_option('forbes_databases_version');
-
-  // Migrate to version 1.0.0. Earlier versions had hardcoded access rules
-  if (!$version) {
-    $query = new WP_Query(
-      array(
-        'post_type' => 'forbes_databases',
-        'nopaging' => true
-      )
-    );
-    if ( $query->have_posts() ) {
-      while ( $query->have_posts() ) {
-        $query->the_post();
-        $custom = get_post_custom($post->ID);
-        $availability = $custom["database_availability"][0];
-        if (!term_exists($availability, 'forbes_database_categories')) {
-          switch ($availability) {
-            case 'state-wide':
-              $name = "Free State Wide.";
-              break;
-            case 'cwmars':
-              $name = "Free With C/W Mars Card";
-              break;
-            case 'forbes-card':
-              $name = "Free With Forbes Card";;
-              break;
-            case 'bpl-ecard':
-              $name = 'Free With BPL ECard';
-              break;
-            case 'in-library':
-              $name = 'Free In Library';
-              break;
-            case 'anywhere':
-              $name = 'Free Anywhere';
-          }
-          $args = array(
-            'description' => forbes_databases_get_availability_text($post),
-            'slug' => $availability
-          );
-          wp_insert_term($name, 'forbes_database_categories', $args);
-        }
-        wp_set_object_terms($post->ID, $availability, 'forbes_database_categories');
-      }
-    }
-    wp_reset_query();
-  }
-}
