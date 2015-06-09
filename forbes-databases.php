@@ -61,7 +61,6 @@ class Library_Databases_Plugin {
    * This is registered with register_activation_hook for this file
    */
   function flush_rewrites() {
-    forbes_databases_init();
     flush_rewrite_rules();
   }
 
