@@ -61,6 +61,7 @@ class Library_Databases_Plugin {
    * This is registered with register_activation_hook for this file
    */
   function flush_rewrites() {
+    $this->init();
     flush_rewrite_rules();
   }
 
