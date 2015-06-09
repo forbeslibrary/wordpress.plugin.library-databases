@@ -3,6 +3,19 @@
  * Admin interface for the Library Databases plugin.
  */
 class Library_Databases_Plugin_Admin {
+
+  function __construct() {
+    add_action('add_meta_boxes', array($this, 'add_meta_boxes'));
+    add_action('admin_head', array($this, 'admin_css'));
+    add_action('admin_init', array($this, 'init'));
+    add_action('admin_menu', array($this, 'menu'));
+    add_action('forbes_database_categories_add_form_fields', array($this, 'categories_custom_fields'));
+    add_action('dashboard_glance_items', array($this, 'add_glance_items'));
+    add_action('manage_forbes_databases_posts_custom_column', array($this, 'custom_columns'));
+    add_action('save_post', array($this, 'save_details'));
+    add_filter('manage_forbes_databases_posts_columns', array($this, 'manage_columns'));
+  }
+
   /**
    * @wp-hook admin_menu
    */

@@ -9,7 +9,6 @@
  */
 
 class Library_Databases_Plugin {
-  private $admin;
 
   function __construct() {
     $this->load_dependencies();
@@ -25,29 +24,16 @@ class Library_Databases_Plugin {
     require_once( dirname( __FILE__ ) . '/shortcodes.php' );
     if ( is_admin() ) {
       require_once(dirname( __FILE__ ) . '/admin.php');
-      $this->admin = new Library_Databases_Plugin_Admin();
     }
   }
 
   function add_actions() {
     add_action('init', array($this, 'init'));
     add_action('wp_head', array($this, 'public_css'));
-
-    $admin = $this->admin;
-    add_action('add_meta_boxes', array($admin, 'add_meta_boxes'));
-    add_action('admin_head', array($admin, 'admin_css'));
-    add_action('admin_init', array($admin, 'init'));
-    add_action('admin_menu', array($admin, 'menu'));
-    add_action('forbes_database_categories_add_form_fields', array($admin, 'categories_custom_fields'));
-    add_action('dashboard_glance_items', array($admin, 'add_glance_items'));
-    add_action('manage_forbes_databases_posts_custom_column', array($admin, 'custom_columns'));
-    add_action('save_post', array($admin, 'save_details'));
   }
 
   function add_filters() {
-    $admin = $this->admin;
     add_filter('single_template', array($this, 'single_template'));
-    add_filter('manage_forbes_databases_posts_columns', array($admin, 'manage_columns'));
   }
 
   function add_shortcodes() {
