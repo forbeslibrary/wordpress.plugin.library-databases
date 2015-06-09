@@ -13,8 +13,6 @@ class Library_Databases_Plugin {
 
   function __construct() {
     $this->load_dependencies();
-    $this->admin = new Library_Databases_Plugin_Admin();
-    
     register_activation_hook(__FILE__, array($this, 'flush_rewrites'));
     $this->add_actions();
     $this->add_filters();
@@ -26,6 +24,7 @@ class Library_Databases_Plugin {
     require_once( dirname( __FILE__ ) . '/shortcodes.php' );
     if ( is_admin() ) {
       require_once(dirname( __FILE__ ) . '/admin.php');
+      $this->admin = new Library_Databases_Plugin_Admin();
     }
   }
 
