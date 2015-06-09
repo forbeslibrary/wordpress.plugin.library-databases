@@ -29,17 +29,18 @@ class Library_Databases_Plugin {
   }
 
   function add_actions() {
-    $admin = $this->admin;
-    add_action('wp_head', array($this, 'public_css'));
-    add_action('dashboard_glance_items', array($this, 'add_glance_items'));
     add_action('forbes_database_categories_add_form_fields', array($this, 'categories_custom_fields'));
     add_action('init', array($this, 'init'));
+    add_action('wp_head', array($this, 'public_css'));
+
+    $admin = $this->admin;
+    add_action('add_meta_boxes', array($admin, 'add_meta_boxes'));
+    add_action('admin_head', array($admin, 'admin_css'));
     add_action('admin_init', array($admin, 'init'));
     add_action('admin_menu', array($admin, 'menu'));
-    add_action('add_meta_boxes', array($admin, 'add_meta_boxes'));
-    add_action('save_post', array($admin, 'save_details'));
+    add_action('dashboard_glance_items', array($admin, 'add_glance_items'));
     add_action('manage_forbes_databases_posts_custom_column', array($admin, 'custom_columns'));
-    add_action('admin_head', array($admin, 'admin_css'));
+    add_action('save_post', array($admin, 'save_details'));
   }
 
   function add_filters() {
