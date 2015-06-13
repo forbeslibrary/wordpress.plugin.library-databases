@@ -7,7 +7,7 @@ class Library_Databases_Update_Tool {
    * Migrate data from earlier versions
    */
   function update() {
-    $version = get_option('forbes_databases_version');
+    $version = get_option('lib_databases_version');
 
     if (!$version) {
       $this->update_to_1_0_0();
@@ -18,13 +18,20 @@ class Library_Databases_Update_Tool {
    * Migrate to v1.0.0
    *
    * Earlier versions had hard coded access rules and didn't use the
-   * forbes_database_categories taxonomy
+   * lib_database_categories taxonomy
    */
   function update_to_1_0_0() {
+    $this->rename_custom_posts_for_1_0_0();
+    $this->rename_taxonomies_for_1_0_0();
+    $this->update_availability_for_1_0_0();
+    $this->update_settings_for_1_0_0();
+  }
+
+  function update_availability_for_1_0_0() {
     global $post;
     $query = new WP_Query(
       array(
-        'post_type' => 'forbes_databases',
+        'post_type' => 'lib_databases',
         'nopaging' => true
       )
     );
@@ -33,7 +40,7 @@ class Library_Databases_Update_Tool {
         $query->the_post();
         $custom = get_post_custom($post->ID);
         $availability = $custom["database_availability"][0];
-        if (!term_exists($availability, 'forbes_database_categories')) {
+        if (!term_exists($availability, 'lib_databases_categories')) {
           switch ($availability) {
             case 'state-wide':
               $name = "Free State Wide.";
@@ -54,14 +61,52 @@ class Library_Databases_Update_Tool {
               $name = 'Free Anywhere';
           }
           $args = array(
-            'description' => forbes_databases_get_availability_text($post),
+            'description' => lib_databases_get_availability_text($post),
             'slug' => $availability
           );
-          wp_insert_term($name, 'forbes_database_categories', $args);
+          wp_insert_term($name, 'lib_databases_categories', $args);
         }
-        wp_set_object_terms($post->ID, $availability, 'forbes_database_categories');
+        wp_set_object_terms($post->ID, $availability, 'lib_databases_categories');
       }
     }
     wp_reset_query();
+  }
+
+  function rename_custom_posts_for_1_0_0() {
+    register_post_type('forbes_databases'); // we must register the old post type
+    $items = get_posts('numberposts=-1&post_status=any&post_type=forbes_databases');
+    foreach ($items as $item) {
+      $update['ID'] = $item->ID;
+      $update['post_type'] = 'lib_databases';
+      wp_update_post( $update );
+    }
+  }
+
+  function rename_taxonomies_for_1_0_0() {
+    // the custom taxonomy lib_databases_research_areas used to be called research-area
+    global $wpdb;
+    register_taxonomy('research-area', 'lib_databases'); // we must register the taxonomy
+    $terms = get_terms('research-area');
+    foreach ($terms as $term) {
+      $wpdb->query(
+        "
+        UPDATE $wpdb->term_taxonomy
+        SET taxonomy = 'lib_databases_research_areas'
+        WHERE term_id = $term->term_id
+        "
+      );
+    }
+  }
+
+  function update_settings_for_1_0_0() {
+    /*if (!get_option('lib_databases_settings_ip_addresses')) {
+      update_option('lib_databases_settings_ip_addresses', get_option('forbes_databases_settings_ip_addresses'));
+    }*/
+    global $wpdb;
+    $wpdb->update(
+      'wp_options',
+      array('option_name' => 'lib_databases_settings_ip_addresses'),
+      array('option_name' => 'forbes_databases_settings_ip_addresses')
+    );
   }
 }

@@ -9,11 +9,11 @@ class Library_Databases_Plugin_Admin {
     add_action('admin_head', array($this, 'admin_css'));
     add_action('admin_init', array($this, 'init'));
     add_action('admin_menu', array($this, 'menu'));
-    add_action('forbes_database_categories_add_form_fields', array($this, 'categories_custom_fields'));
+    add_action('lib_databases_categories_add_form_fields', array($this, 'categories_custom_fields'));
     add_action('dashboard_glance_items', array($this, 'add_glance_items'));
-    add_action('manage_forbes_databases_posts_custom_column', array($this, 'custom_columns'));
+    add_action('manage_lib_databases_posts_custom_column', array($this, 'custom_columns'));
     add_action('save_post', array($this, 'save_details'));
-    add_filter('manage_forbes_databases_posts_columns', array($this, 'manage_columns'));
+    add_filter('manage_lib_databases_posts_columns', array($this, 'manage_columns'));
   }
 
   /**
@@ -28,9 +28,9 @@ class Library_Databases_Plugin_Admin {
       // Capability
       'manage_options',
       // Menu Slug (also-referred to as option group)
-      'forbes_databases_settings_page',
+      'lib_databases_settings_page',
       // Callback
-      'forbes_databases_output_settings_page'
+      array($this, 'output_settings_page')
     );
   }
 
@@ -48,32 +48,32 @@ class Library_Databases_Plugin_Admin {
       // Title
       __('In Library Use'),
       // Callback
-      'forbes_databases_output_default_settings_section',
+      array($this, 'output_default_settings_section'),
       // Page
-      'forbes_databases_settings_page'
+      'lib_databases_settings_page'
     );
 
     add_settings_field(
       // ID
-      'forbes_databases_settings_ip_addresses',
+      'lib_databases_settings_ip_addresses',
       // Title
       __('Library Databases In Library Use IP Addresses'),
       // Callback
-      'forbes_databases_output_ip_addresses_form_field',
+      array($this, 'output_ip_addresses_form_field'),
       // Page
-      'forbes_databases_settings_page'//,
+      'lib_databases_settings_page'//,
       // Section
-      //'forbes_databases_settings_in_library_section'
+      //'lib_databases_settings_in_library_section'
     );
 
     register_setting(
-      'forbes_databases_settings_page',
-      'forbes_databases_settings_ip_addresses'
+      'lib_databases_settings_page',
+      'lib_databases_settings_ip_addresses'
     );
   }
 
   /**
-   * Outputs HTML for the forbes_databases settings page.
+   * Outputs HTML for the lib_databases settings page.
    *
    * This is a callback function for the Wordpress Settings API
    */
@@ -82,8 +82,8 @@ class Library_Databases_Plugin_Admin {
     <h1><?php echo __('Library Databases Settings'); ?></h1>
     <form method="POST" action="options.php">
       <?php
-      settings_fields( 'forbes_databases_settings_page' );
-      do_settings_sections( 'forbes_databases_settings_page' );
+      settings_fields( 'lib_databases_settings_page' );
+      do_settings_sections( 'lib_databases_settings_page' );
       submit_button();
       ?>
     </form>
@@ -91,7 +91,7 @@ class Library_Databases_Plugin_Admin {
   }
 
   /**
-   * Outputs HTML for the forbes_databases settings page default section.
+   * Outputs HTML for the lib_databases settings page default section.
    *
    * This is a callback function for the Wordpress Settings API
    */
@@ -100,19 +100,19 @@ class Library_Databases_Plugin_Admin {
   }
 
   /**
-   * Outputs HTML for the forbes_databases settings ip address field.
+   * Outputs HTML for the lib_databases settings ip address field.
    *
    * This is a callback function for the Wordpress Settings API
    */
   function output_ip_addresses_form_field() {
     ?>
     <textarea
-      name="forbes_databases_settings_ip_addresses"
-      id="forbes_databases_settings_ip_addresses"
+      name="lib_databases_settings_ip_addresses"
+      id="lib_databases_settings_ip_addresses"
       rows="8"
       cols="20"
       class="code"
-    ><?php echo get_option( 'forbes_databases_settings_ip_addresses' ); ?></textarea>
+    ><?php echo get_option( 'lib_databases_settings_ip_addresses' ); ?></textarea>
     <p class="description">Please enter each IP address on its own line.<p>
     <?php
   }
@@ -127,20 +127,20 @@ class Library_Databases_Plugin_Admin {
     <style>
       #database-url-meta label { display:block; margin-top:1em; }
       #database-url-meta label:first-child { margin-top: 0; }
-      .column-research-area { width: 8em; }
+      .column-lib_database_research_areas { width: 8em; }
       .column-uam_access { width: 8em; } /* this column created by User Access Manager plugin */
-      #dashboard_right_now .forbes_databases-count a:before,
-      #dashboard_right_now .forbes_databases-count span:before {
+      #dashboard_right_now .lib_databases-count a:before,
+      #dashboard_right_now .lib_databases-count span:before {
         content: "\f319";
       }
-      .taxonomy-forbes_database_categories .form-field .label {
+      .taxonomy-lib_database_categories .form-field .label {
         font-weight: bold;
       }
-      .taxonomy-forbes_database_categories .form-wrap .form-field {
+      .taxonomy-lib_database_categories .form-wrap .form-field {
         margin: 0 0 0.25em;
         padding: 0;
       }
-      .taxonomy-forbes_database_categories #tag-description {
+      .taxonomy-lib_database_categories #tag-description {
         height: 4em;
       }
     </style>
@@ -148,20 +148,20 @@ class Library_Databases_Plugin_Admin {
   }
 
   /**
-   * Add information about forbes_databases to the glance items.
+   * Add information about lib_databases to the glance items.
    *
    * @wp-hook dashboard_glance_items
    */
   function add_glance_items() {
-    $pt_info = get_post_type_object('forbes_databases');
-    $num_posts = wp_count_posts('forbes_databases');
+    $pt_info = get_post_type_object('lib_databases');
+    $num_posts = wp_count_posts('lib_databases');
     $num = number_format_i18n($num_posts->publish);
     $text = _n( $pt_info->labels->singular_name, $pt_info->labels->name, intval($num_posts->publish) ); // singular/plural text label
-    echo '<li class="page-count '.$pt_info->name.'-count"><a href="edit.php?post_type=forbes_databases">'.$num.' '.$text.'</li>';
+    echo '<li class="page-count '.$pt_info->name.'-count"><a href="edit.php?post_type=lib_databases">'.$num.' '.$text.'</li>';
   }
 
   /**
-   * Save custom fields from forbes_databases edit page.
+   * Save custom fields from lib_databases edit page.
    *
    * @wp-hook save_post
    */
@@ -180,7 +180,7 @@ class Library_Databases_Plugin_Admin {
   }
 
   /**
-   * Adds custom fields to the forbes_databases edit page.
+   * Adds custom fields to the lib_databases edit page.
    *
    * @wp-hook add_meta_boxes
    */
@@ -188,25 +188,25 @@ class Library_Databases_Plugin_Admin {
     add_meta_box(
       "database-availability-meta",
       __("Database Availability"),
-      "forbes_databases_editbox_database_availability",
-      "forbes_databases",
+      array($this, 'editbox_database_availability'),
+      "lib_databases",
       "side",
       "high"
     );
     add_meta_box(
       "database-url-meta",
       __("Database URL"),
-      "forbes_databases_editbox_database_urls",
-      "forbes_databases",
+      array($this, 'editbox_database_urls'),
+      "lib_databases",
       "side",
       "high"
     );
   }
 
   /**
-   * Outputs the contents of each custom column on the forbes_databases admin page.
+   * Outputs the contents of each custom column on the lib_databases admin page.
    *
-   * @wp-hook manage_forbes_databases_posts_custom_column
+   * @wp-hook manage_lib_databases_posts_custom_column
    */
   function custom_columns($column){
     global $post;
@@ -215,21 +215,21 @@ class Library_Databases_Plugin_Admin {
       case "description":
         the_excerpt();
         break;
-      case 'research-area':
-        echo implode(', ', wp_get_post_terms($post->ID, 'research-area', array("fields" => "names")));
+      case 'lib_databases_research_areas':
+        echo implode(', ', wp_get_post_terms($post->ID, 'lib_databases_research_areas', array("fields" => "names")));
         break;
     }
   }
 
   /**
-   * Customizes the columns on the forbes_databases admin page.
+   * Customizes the columns on the lib_databases admin page.
    *
-   * @wp-hook manage_forbes_databases_posts_columns
+   * @wp-hook manage_lib_databases_posts_columns
    */
   function manage_columns($columns){
     $columns = array_merge( $columns, array(
       'title' => __('Database Title'),
-      'research-area' => __('Research Area'),
+      'lib_databases_research_areas' => __('Research Area'),
       'description' => __('Description'),
     ));
 
@@ -237,7 +237,7 @@ class Library_Databases_Plugin_Admin {
   }
 
   /**
-   * Returns the html for the database urls box on the forbes_databases edit page.
+   * Returns the html for the database urls box on the lib_databases edit page.
    */
   function editbox_database_urls(){
     global $post;
@@ -289,7 +289,7 @@ class Library_Databases_Plugin_Admin {
   }
 
   /**
-   * Returns the html for the database availability box on the forbes_databases edit page.
+   * Returns the html for the database availability box on the lib_databases edit page.
    */
   function editbox_database_availability(){
     global $post;

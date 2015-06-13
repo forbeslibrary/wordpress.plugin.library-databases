@@ -37,9 +37,9 @@ class Library_Databases_Plugin {
   }
 
   function add_shortcodes() {
-    add_shortcode( 'forbes_database_list', 'forbes_database_list_shortcode_handler' );
-    add_shortcode( 'forbes_database_feature', 'forbes_database_feature_shortcode_handler' );
-    add_shortcode( 'forbes_database_select', 'forbes_database_select_shortcode_handler' );
+    add_shortcode( 'lib_database_list', 'lib_database_list_shortcode_handler' );
+    add_shortcode( 'lib_database_feature', 'lib_database_feature_shortcode_handler' );
+    add_shortcode( 'lib_database_select', 'lib_database_select_shortcode_handler' );
   }
 
   /**
@@ -72,7 +72,7 @@ class Library_Databases_Plugin {
   }
 
   /**
-   * Registers the custom post type forbes_databases
+   * Registers the custom post type lib_databases
    */
   function register_custom_post_types() {
     $labels = array(
@@ -103,7 +103,7 @@ class Library_Databases_Plugin {
       'supports' => array('title','editor','thumbnail')
     );
 
-    register_post_type( 'forbes_databases' , $args );
+    register_post_type( 'lib_databases' , $args );
   }
 
   /**
@@ -111,8 +111,8 @@ class Library_Databases_Plugin {
    */
   function register_custom_taxonomies() {
     register_taxonomy(
-      'research-area',
-      array('forbes_databases'),
+      'lib_databases_research_areas',
+      array('lib_databases'),
       array(
         'label' => 'Research Areas',
         'singular_label' => 'Research Area',
@@ -122,8 +122,8 @@ class Library_Databases_Plugin {
     );
 
     register_taxonomy(
-      'forbes_database_categories',
-      'forbes_databases',
+      'lib_databases_categories',
+      'lib_databases',
       array(
         'label' => 'Access Categories',
         'labels' => array(
@@ -151,10 +151,10 @@ class Library_Databases_Plugin {
   function public_css() {
     ?>
     <style>
-      #content .forbes_databases_database_unavailable { color:#888; }
-      #content .forbes_databases_database_unavailable span { font-size:small; }
-      #content .forbes_databases_availability_text { font-style:italic; color:#555; }
-      #content .forbes_databases_availability_text a { font-weight:bold; }
+      #content .lib_databases_database_unavailable { color:#888; }
+      #content .lib_databases_database_unavailable span { font-size:small; }
+      #content .lib_databases_availability_text { font-style:italic; color:#555; }
+      #content .lib_databases_availability_text a { font-weight:bold; }
       .ico_in-library, .ico_state-wide, .ico_cwmars, .ico_bpl-ecard, .ico_forbes-card, .ico_anywhere {
         display: inline-block;
         background-image: url(<?php echo plugins_url('img/database-availability.png',__FILE__ )?>);
@@ -201,14 +201,14 @@ class Library_Databases_Plugin {
   }
 
   /**
-   * Use a special template for showing a single forbes_database on a page.
+   * Use a special template for showing a single lib_database on a page.
    *
    * @wp-hook single_template
    */
   function single_template($template){
     global $post;
 
-    if ($post->post_type == 'forbes_databases') {
+    if ($post->post_type == 'lib_databases') {
        $template = dirname( __FILE__ ) . '/single-forbes-database.php';
     }
     return $template;

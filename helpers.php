@@ -6,16 +6,16 @@
 /**
  * Returns the URL of the availability icon.
  */
-function forbes_databases_get_availability_icon($post) {
+function lib_databases_get_availability_icon($post) {
   $custom = get_post_custom($post->ID);
   $availability = $custom["database_availability"][0];
-  return '<span class="forbes_database_availability_icon ico_' . $availability . '"> </span>';
+  return '<span class="lib_database_availability_icon ico_' . $availability . '"> </span>';
 }
 
 /**
  * Returns a statement about the availability and funding source of the database.
  */
-function forbes_databases_get_availability_text($post) {
+function lib_databases_get_availability_text($post) {
   $custom = get_post_custom($post->ID);
   $availability = $custom["database_availability"][0];
   switch ($availability) {
@@ -45,10 +45,10 @@ function forbes_databases_get_availability_text($post) {
  *
  * Returns TRUE for remote users if the database is in library use only.
  */
-function forbes_databases_is_inaccessible($post) {
+function lib_databases_is_inaccessible($post) {
   $custom = get_post_custom($post->ID);
   $availability = $custom["database_availability"][0];
-  if ($availability == 'in-library' && !forbes_databases_user_in_library()) {
+  if ($availability == 'in-library' && !lib_databases_user_in_library()) {
     return TRUE;
   }
   return FALSE;
@@ -59,7 +59,7 @@ function forbes_databases_is_inaccessible($post) {
  *
  * Returns TRUE for remote users if the database is provided by BPL.
  */
-function forbes_databases_requires_bpl_card($post) {
+function lib_databases_requires_bpl_card($post) {
   $custom = get_post_custom($post->ID);
   $availability = $custom["database_availability"][0];
   if ($availability == 'bpl-ecard') {
@@ -71,13 +71,13 @@ function forbes_databases_requires_bpl_card($post) {
 /**
  * Is the user in the library?
  */
-function forbes_databases_user_in_library() {
+function lib_databases_user_in_library() {
   $in_library_ip_addresses = explode(
     "\n",
     str_replace(
       "\r",
       '',
-      get_option( 'forbes_databases_settings_ip_addresses' ))
+      get_option( 'lib_databases_settings_ip_addresses' ))
   );
   $remote_address =  $_SERVER['REMOTE_ADDR'];
   return in_array($remote_address, $in_library_ip_addresses);
@@ -89,13 +89,13 @@ function forbes_databases_user_in_library() {
  * The URL returned will be the home use url if and only it has been
  * defined and the user is outside of the library.
  */
-function forbes_databases_get_database_url($post) {
+function lib_databases_get_database_url($post) {
 
   $custom = get_post_custom($post->ID);
   $database_main_url = $custom["database_main_url"][0];
   $database_home_use_url = $custom["database_home_use_url"][0];
   $database_availability = $custom["database_availability"][0];
-  if ($database_home_use_url && !forbes_databases_user_in_library()) {
+  if ($database_home_use_url && !lib_databases_user_in_library()) {
      return $database_home_use_url;
   }
   return $database_main_url;
@@ -104,32 +104,32 @@ function forbes_databases_get_database_url($post) {
 /**
  * Returns a simple HTML rendering of the database.
  */
-function forbes_databases_display($post) {
+function lib_databases_display($post) {
   ob_start();?>
-  <article id="post-<?php the_ID(); ?>" class="forbes_databases post hentry">
-    <?php if (forbes_databases_is_inaccessible(get_post())): ?>
-    <h2 class="entry-title forbes_databases_database_unavailable">
-      <?php echo forbes_databases_get_availability_icon($post); ?>
+  <article id="post-<?php the_ID(); ?>" class="lib_databases post hentry">
+    <?php if (lib_databases_is_inaccessible(get_post())): ?>
+    <h2 class="entry-title lib_databases_database_unavailable">
+      <?php echo lib_databases_get_availability_icon($post); ?>
       <?php the_title(); ?>
       <span> (available in library)</span>
     </h2>
     <?php else: ?>
     <h2 class="entry-title">
-      <a href="<?php echo forbes_databases_get_database_url($post); ?>">
-      <?php echo forbes_databases_get_availability_icon($post); ?>
+      <a href="<?php echo lib_databases_get_database_url($post); ?>">
+      <?php echo lib_databases_get_availability_icon($post); ?>
       <?php the_title(); ?>
       <?php if (has_post_thumbnail( $post->ID )) {
         $image_attributes = wp_get_attachment_image_src( get_post_thumbnail_id(), 'thumbnail');
         $feature_image_url = $image_attributes[0];
-        echo "<img src=\"$feature_image_url\" class=\"forbes_database_feature_icon\">";
+        echo "<img src=\"$feature_image_url\" class=\"lib_database_feature_icon\">";
     }?>
     </a>
     </h2>
     <?php endif; ?>
   <div class="entry-content">
     <?php echo apply_filters('the_content', $post->post_content); ?>
-    <?php $availability_text = forbes_databases_get_availability_text($post);
-    if ($availability_text) { echo '<p class="forbes_databases_availability_text">' . $availability_text . '</p>'; } ?>
+    <?php $availability_text = lib_databases_get_availability_text($post);
+    if ($availability_text) { echo '<p class="lib_databases_availability_text">' . $availability_text . '</p>'; } ?>
   </div>
   <?php if (is_user_logged_in()): ?>
     <footer class="entry-utility"><span class="edit-link"><?php edit_post_link('Edit Database'); ?></span></footer>
@@ -141,21 +141,21 @@ function forbes_databases_display($post) {
 /**
  * Returns a wp_query object for the passed shortcode attributes.
  */
-function forbes_databases_query($atts) {
+function lib_databases_query($atts) {
   extract( shortcode_atts( array(
     'research_area' => null,
     'exclude_free' => null,
   ), $atts ) );
 
   $query_args = array(
-    'post_type' => 'forbes_databases',
+    'post_type' => 'lib_databases',
     'orderby' => 'title',
     'order' => 'ASC',
     'posts_per_page'=>-1,
     );
 
   if ($research_area) {
-    $query_args['tax_query'] = array( array('taxonomy' => 'research-area', 'field'=>'slug', 'include_children'=>FALSE, 'terms' => $research_area) );
+    $query_args['tax_query'] = array( array('taxonomy' => 'lib_databases_research_areas', 'field'=>'slug', 'include_children'=>FALSE, 'terms' => $research_area) );
   }
 
   if ($exclude_free) {
