@@ -38,7 +38,6 @@ class Library_Databases_Plugin {
 
   function add_shortcodes() {
     add_shortcode( 'lib_database_list', 'lib_database_list_shortcode_handler' );
-    add_shortcode( 'lib_database_feature', 'lib_database_feature_shortcode_handler' );
     add_shortcode( 'lib_database_select', 'lib_database_select_shortcode_handler' );
   }
 
