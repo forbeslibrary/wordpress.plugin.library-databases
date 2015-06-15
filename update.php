@@ -25,6 +25,7 @@ class Library_Databases_Update_Tool {
     $this->rename_taxonomies_for_1_0_0();
     $this->update_availability_for_1_0_0();
     $this->update_settings_for_1_0_0();
+    $this->update_shortcodes_for_1_0_0();
   }
 
   function update_availability_for_1_0_0() {
@@ -108,5 +109,30 @@ class Library_Databases_Update_Tool {
       array('option_name' => 'lib_databases_settings_ip_addresses'),
       array('option_name' => 'forbes_databases_settings_ip_addresses')
     );
+  }
+
+  function update_shortcodes_for_1_0_0() {
+    global $post;
+    $shortcode_migrations = array(
+      'forbes_database_list' => 'lib_database_list',
+      'forbes_database_select' => 'lib_database_select',
+    );
+    foreach ($shortcode_migrations as $old => $new) {
+      $query = new WP_Query(
+        array(
+          's' => $old,
+          'nopaging' => true
+        )
+      );
+      if ( $query->have_posts() ) {
+        while ( $query->have_posts() ) {
+          $query->the_post();
+          $update['ID'] = $post->ID;
+          $update['post_content'] = str_replace($old, $new, $post->post_content);
+          wp_update_post( $update );
+        }
+      }
+      wp_reset_query();
+    }
   }
 }
