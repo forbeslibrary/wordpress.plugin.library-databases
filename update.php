@@ -104,7 +104,7 @@ class Library_Databases_Update_Tool {
     }*/
     global $wpdb;
     $wpdb->update(
-      'wp_options',
+      $wpdb->options,
       array('option_name' => 'lib_databases_settings_ip_addresses'),
       array('option_name' => 'forbes_databases_settings_ip_addresses')
     );
