@@ -1,6 +1,8 @@
 <?php
 class Library_Databases_Categories_Admin {
   function __construct() {
+    add_action('admin_head', array($this, 'embedUploaderCode'));
+
     $actions = array(
       'add_form_fields',
       'edit_form_fields'
@@ -92,12 +94,20 @@ class Library_Databases_Categories_Admin {
     ?>
     <tr class="form-field">
       <th scope="row">
-        <label for="lib_categories_file">
+        <label for="image_upload_button">
           <?php _e('Image'); ?>
         </label>
       </th>
       <td>
-        <input type="file" id="lib_categories_file" name="term_meta[image]"/>
+        <input type="hidden"
+            class="metaValueField"
+            id="term_meta[image]"
+            name="term_meta[image]"
+            value="<?php echo $term_meta['image']; ?>"
+          />
+          <div id="metaImage"></div>
+          <input class="image_upload_button"  type="button" value="Choose File" />
+          <input class="removeImageBtn" type="button" value="Remove File" />
       </td>
     </tr>
     <tr class="form-field">
@@ -114,6 +124,42 @@ class Library_Databases_Categories_Admin {
         </label>
       </td>
     </tr>
+    <?php
+  }
+
+  /**
+   * Add JavaScript to get URL from media uploader.
+   */
+  function embedUploaderCode() {
+    $screen = get_current_screen();
+    if ($screen->base != 'edit-tags'
+        or $screen->taxonomy != 'lib_databases_categories') {
+      return;
+    }
+    ?>
+    <script type="text/javascript">
+    jQuery(document).ready(function() {
+
+      jQuery('.removeImageBtn').click(function() {
+        jQuery('#awdMetaImage').html('');
+        jQuery('#term_meta[image]').val('');
+        return false;
+      });
+
+      jQuery('.image_upload_button').click(function() {
+        inputField = jQuery(this).prev('.metaValueField');
+        tb_show('', 'media-upload.php?TB_iframe=true');
+        window.send_to_editor = function(html) {
+          url = jQuery(html).attr('href');
+          inputField.val(url);
+          jQuery('#awdMetaImage').html('<p>URL: '+ url + '</p>');
+          tb_remove();
+        };
+        return false;
+      });
+    });
+
+    </script>
     <?php
   }
 }
