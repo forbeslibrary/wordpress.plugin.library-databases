@@ -8,10 +8,51 @@ class Library_Databases_Categories_Admin {
     foreach ($actions as $action) {
       add_action(
         'lib_databases_categories_' . $action,
-        array($this, $action),
-        20
+        array($this, $action)
       );
     }
+
+    $actions = array(
+      'create',
+      'edit'
+    );
+    foreach ($actions as $action) {
+      add_action(
+        $action . '_lib_databases_categories',
+        array($this, $action)
+      );
+    }
+  }
+
+  /**
+   * Save taxonomy custom fields
+   */
+  function save($term_id) {
+      $term_meta = get_option( "taxonomy_{$term_id}" );
+
+      if (isset($_POST['term_meta']['library_use_only'])) {
+        $term_meta['library_use_only'] = true;
+      } else {
+        $term_meta['library_use_only'] = false;
+      }
+
+      // Save the option array.
+      update_option( "taxonomy_{$term_id}", $term_meta );
+
+  }
+
+  /**
+   * Hook for term creation
+   */
+  function create($term_id) {
+    $this->save($term_id);
+  }
+
+  /**
+   * Hook for term edit
+   */
+  function edit($term_id) {
+    $this->save($term_id);
   }
 
   /**
@@ -47,6 +88,7 @@ class Library_Databases_Categories_Admin {
    */
   function edit_form_fields($term) {
     $term_meta = get_option( "taxonomy_{$term->term_id}" );
+    var_dump($term_meta);
     ?>
     <tr class="form-field">
       <th scope="row">
