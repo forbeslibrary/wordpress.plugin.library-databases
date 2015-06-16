@@ -5,11 +5,12 @@
 class Library_Databases_Plugin_Admin {
 
   function __construct() {
+    require_once( dirname( __FILE__ ) . '/categories-admin.php' );
+    new Library_Databases_Categories_Admin();
     add_action('add_meta_boxes', array($this, 'add_meta_boxes'));
     add_action('admin_head', array($this, 'admin_css'));
     add_action('admin_init', array($this, 'init'));
     add_action('admin_menu', array($this, 'menu'));
-    add_action('lib_databases_categories_add_form_fields', array($this, 'categories_custom_fields'));
     add_action('dashboard_glance_items', array($this, 'add_glance_items'));
     add_action('manage_lib_databases_posts_custom_column', array($this, 'custom_columns'));
     add_action('save_post', array($this, 'save_details'));
@@ -257,34 +258,6 @@ class Library_Databases_Plugin_Admin {
     <input name="database_main_url" value="<?php echo $database_main_url; ?>" />
     <label><?php echo __('Home Use URL (if different)'); ?>:</label>
     <input name="database_home_use_url" value="<?php echo $database_home_use_url; ?>" />
-    <?php
-  }
-
-  /**
-   * Returns the html for the custom fields in the new database access category box
-   */
-  function categories_custom_fields(){
-    ?>
-    <div class="form-field">
-      <label>
-        <div class="label">
-          <?php _e('Image'); ?>
-        </div>
-        <input type="file" name="term_meta[image]"/>
-      </label>
-    </div>
-    <div class="form-field">
-      <div class="label">
-        <?php _e('Access Restrictions'); ?>
-      </div>
-      <label>
-        <input type="checkbox" name="term_meta[library_use_only]"/>
-        <?php _e('In Library Only'); ?>
-        <p>
-          <?php _e('(set library IP addresses under Settings > Library Databases)'); ?>
-        </p>
-      </label>
-    </div>
     <?php
   }
 
