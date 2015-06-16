@@ -129,6 +129,7 @@ class Library_Databases_Plugin {
           'singular_label' => 'Access Category',
           'add_new_item' => 'Add Access Category',
           'edit_item' => 'Edit Access Category',
+          'search_items' => 'Search Access Categories',
           'popular_items' => NULL
         ),
         'hierarchical' => False,
