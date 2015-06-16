@@ -37,8 +37,8 @@ class Library_Databases_Plugin {
   }
 
   function add_shortcodes() {
-    add_shortcode( 'lib_database_list', 'lib_database_list_shortcode_handler' );
-    add_shortcode( 'lib_database_select', 'lib_database_select_shortcode_handler' );
+    add_shortcode( 'lib_database_list', array('Library_Databases_Shortcodes', 'lib_database_list'));
+    add_shortcode( 'lib_database_select', array('Library_Databases_Shortcodes', 'lib_database_select'));
   }
 
   /**
