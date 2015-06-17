@@ -24,12 +24,69 @@ class Library_Databases_Categories_Admin {
         array($this, $action)
       );
     }
+
+    add_filter(
+      'manage_edit-lib_databases_categories_columns',
+      array($this, 'columns')
+    );
+
+    add_filter(
+      'manage_lib_databases_categories_custom_column',
+      array($this, 'column_content'),
+      10, 3
+    );
+  }
+
+  /**
+   * Modify the columns in the admin interface_exists
+   */
+  function columns($columns) {
+    $columns = array(
+      'cb' => '<input type="checkbox" />',
+      'name' => __('Name'),
+      'image' => __('Image'),
+      'library_use_only' => __('Library Use Only'),
+      'description' => __('Description'),
+      'slug' => __('Slug'),
+      'posts' => __('Count')
+    );
+    return $columns;
+  }
+
+  /**
+   * Return content for custom columns
+   */
+  function column_content($value, $column_name = null, $term_id) {
+    $term_meta = get_option( "taxonomy_{$term_id}" );
+    switch ($column_name) {
+      case 'image':
+        if (isset($term_meta['image'])) {
+          $value = wp_get_attachment_image($term_meta['image'], array(80, 80));
+        }
+        break;
+      case 'library_use_only':
+        if (isset($term_meta['library_use_only'])) {
+          $value = ($term_meta['library_use_only'] ? 'yes' : 'no');
+        } else {
+          $value = 'no';
+        }
+    }
+    return $value;
   }
 
   /**
    * Save taxonomy custom fields
    */
-  function save($term_id) {
+  function save($term_id, $data = null) {
+      if (!$data and isset($_POST['term_meta'])) {
+        $data = $_POST['term_meta'];
+      }
+
+      if (!$data) {
+        error_log('No lib_databases_categories data to save');
+        return;
+      }
+      
       $term_meta = get_option( "taxonomy_{$term_id}" );
 
       if (isset($_POST['term_meta']['library_use_only'])) {
