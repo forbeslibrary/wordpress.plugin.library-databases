@@ -4,6 +4,7 @@ class Library_Databases_Categories_Admin {
     $taxonomy = 'lib_databases_categories';
     $actions = array(
       "admin_head" => 'embedUploaderCode',
+      "admin_menu" => 'admin_menu',
       "{$taxonomy}_add_form_fields" => 'add_form_fields',
       "{$taxonomy}_edit_form_fields" => 'edit_form_fields',
       "create_{$taxonomy}" => 'create',
@@ -23,6 +24,10 @@ class Library_Databases_Categories_Admin {
       array($this, 'column_content'),
       10, 3
     );
+  }
+
+  function admin_menu() {
+    remove_meta_box('tagsdiv-lib_databases_categories', 'lib_databases', 'side');
   }
 
   /**
