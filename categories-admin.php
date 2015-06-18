@@ -5,6 +5,7 @@ class Library_Databases_Categories_Admin {
     $actions = array(
       "admin_head" => 'embedUploaderCode',
       "admin_menu" => 'admin_menu',
+      "add_meta_boxes" => "add_meta_boxes",
       "{$taxonomy}_add_form_fields" => 'add_form_fields',
       "{$taxonomy}_edit_form_fields" => 'edit_form_fields',
       "create_{$taxonomy}" => 'create',
@@ -24,6 +25,53 @@ class Library_Databases_Categories_Admin {
       array($this, 'column_content'),
       10, 3
     );
+  }
+
+  function add_meta_boxes() {
+    add_meta_box(
+      "database-availability-meta",
+      __("Database Availability"),
+      array($this, 'output_metabox'),
+      "lib_databases",
+      "side",
+      "high"
+    );
+  }
+
+  /**
+   * Returns the html for the database availability box on the lib_databases edit page.
+   */
+  function output_metabox(){
+    global $post;
+    $taxonomy = 'lib_databases_categories';
+    $tax = get_taxonomy($taxonomy);
+
+    //The name of the form
+    $name = "tax_input[$taxonomy]";
+
+    //Get all the terms for this taxonomy
+    $terms = get_terms($taxonomy, array('hide_empty' => 0));
+
+    $postterms = get_the_terms( $post->ID,$taxonomy );
+    $current = ($postterms ? array_pop($postterms) : false);
+    $current = ($current ? $current->term_id : 0);
+    ?>
+    <ul id="<?php echo $taxonomy; ?>checklist" class="list:<?php echo $taxonomy; ?> categorychecklist form-no-clear">
+      <?php foreach($terms as $term) :?>
+          <?php $id = $taxonomy.'-'.$term->term_id; ?>
+          <li id="<?php echo $id; ?>">
+            <label class='selectit'>
+              <input type='radio'
+                id="<?php echo "in-$id"?>"
+                name="<?php echo $name; ?>"
+                <?php echo checked($current, $term->term_id, false); ?>
+                value="<?php echo $term->name; ?>" />
+            <?php echo $term->name; ?>
+          </label>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+    <?php
   }
 
   function admin_menu() {

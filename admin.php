@@ -187,14 +187,6 @@ class Library_Databases_Plugin_Admin {
    */
   function add_meta_boxes(){
     add_meta_box(
-      "database-availability-meta",
-      __("Database Availability"),
-      array($this, 'editbox_database_availability'),
-      "lib_databases",
-      "side",
-      "high"
-    );
-    add_meta_box(
       "database-url-meta",
       __("Database URL"),
       array($this, 'editbox_database_urls'),
@@ -258,45 +250,6 @@ class Library_Databases_Plugin_Admin {
     <input name="database_main_url" value="<?php echo $database_main_url; ?>" />
     <label><?php echo __('Home Use URL (if different)'); ?>:</label>
     <input name="database_home_use_url" value="<?php echo $database_home_use_url; ?>" />
-    <?php
-  }
-
-  /**
-   * Returns the html for the database availability box on the lib_databases edit page.
-   */
-  function editbox_database_availability(){
-    global $post;
-    $custom = get_post_custom($post->ID);
-    if (isset($custom["database_availability"])) {
-      $database_availability = $custom["database_availability"][0];
-    } else {
-      $database_availability = "";
-    }
-    ?>
-    <label for="forbes-database_availability-state-wide">
-      <?php echo __('Free State Wide'); ?>
-    </label>
-    <input id="forbes-database_availability-state-wide" type="radio" name="database_availability" value="state-wide" <?php if ($database_availability=='state-wide'):?>checked<?php endif;?> ><br>
-    <label for="forbes-database_availability-cwmars">
-      <?php echo __('Free With C/W Mars Card'); ?>
-    </label>
-    <input id="forbes-database_availability-cwmars" type="radio" name="database_availability" value="cwmars" <?php if ($database_availability=='cwmars'):?>checked<?php endif;?> ><br>
-    <label for="forbes-database_availability-forbes-card">
-      <?php echo __('Free With Forbes Card'); ?>
-    </label>
-    <input id="forbes-database_availability-forbes-card" type="radio" name="database_availability" value="forbes-card" <?php if ($database_availability=='forbes-card'):?>checked<?php endif;?> ><br>
-    <label for="forbes-database_availability-bpl-ecard">
-      <?php echo __('Free With BPL ECard'); ?>
-    </label>
-    <input id="forbes-database_availability-bpl-ecard" type="radio" name="database_availability" value="bpl-ecard" <?php if ($database_availability=='bpl-ecard'):?>checked<?php endif;?> ><br>
-    <label for="forbes-database_availability-in-library">
-      <?php echo __('Free In Library'); ?>
-    </label>
-    <input id="forbes-database_availability-in-library" type="radio" name="database_availability" value="in-library" <?php if ($database_availability=='in-library'):?>checked<?php endif;?> ><br>
-    <label for="forbes-database_availability-anywhere">
-      <?php echo __('Free Anywhere'); ?>
-    </label>
-    <input id="forbes-database_availability-anywhere" type="radio" name="database_availability" value="anywhere" <?php if ($database_availability=='anywhere'):?>checked<?php endif;?> ><br>
     <?php
   }
 }
