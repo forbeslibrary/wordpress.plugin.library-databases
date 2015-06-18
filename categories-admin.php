@@ -1,28 +1,16 @@
 <?php
 class Library_Databases_Categories_Admin {
   function __construct() {
-    add_action('admin_head', array($this, 'embedUploaderCode'));
-
+    $taxonomy = 'lib_databases_categories';
     $actions = array(
-      'add_form_fields',
-      'edit_form_fields'
+      "admin_head" => 'embedUploaderCode',
+      "{$taxonomy}_add_form_fields" => 'add_form_fields',
+      "{$taxonomy}_edit_form_fields" => 'edit_form_fields',
+      "create_{$taxonomy}" => 'create',
+      "edit_{$taxonomy}" => 'edit'
     );
-    foreach ($actions as $action) {
-      add_action(
-        'lib_databases_categories_' . $action,
-        array($this, $action)
-      );
-    }
-
-    $actions = array(
-      'create',
-      'edit'
-    );
-    foreach ($actions as $action) {
-      add_action(
-        $action . '_lib_databases_categories',
-        array($this, $action)
-      );
+    foreach ($actions as $action => $method_name) {
+      add_action($action, array($this, $method_name));
     }
 
     add_filter(
@@ -86,7 +74,7 @@ class Library_Databases_Categories_Admin {
         error_log('No lib_databases_categories data to save');
         return;
       }
-      
+
       $term_meta = get_option( "taxonomy_{$term_id}" );
 
       if (isset($_POST['term_meta']['library_use_only'])) {
