@@ -41,18 +41,6 @@ class Library_Databases_Categories_Admin {
   }
 
   /**
-   * Returns the availability for the current post.
-   */
-  static function get_availability() {
-    global $post;
-    $taxonomy = get_taxonomy(self::$tax_name);
-
-    $postterms = get_the_terms($post->ID, self::$tax_name);
-    $current = ($postterms ? array_pop($postterms) : false);
-    return ($current ? $current->term_id : 0);
-  }
-
-  /**
    * Returns the html for the database availability box on the lib_databases edit page.
    */
   function output_metabox(){
@@ -66,7 +54,7 @@ class Library_Databases_Categories_Admin {
     //Get all the terms for this taxonomy
     $terms = get_terms($tax_name, array('hide_empty' => 0));
 
-    $current = self::get_availability();
+    $current = Library_Databases_Categories::get_availability()->term_id;
     ?>
     <ul id="<?php echo $tax_name; ?>checklist" class="list:<?php echo $tax_name; ?> categorychecklist form-no-clear">
       <?php foreach($terms as $term) :?>

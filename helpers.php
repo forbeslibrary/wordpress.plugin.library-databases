@@ -8,8 +8,8 @@
  */
 function lib_databases_get_availability_icon($post) {
   $custom = get_post_custom($post->ID);
-  $availability = $custom["database_availability"][0];
-  return '<span class="lib_database_availability_icon ico_' . $availability . '"> </span>';
+  $availability = Library_Databases_Categories::get_availability();
+  return '<span class="lib_database_availability_icon ico_' . $availability->slug . '"> </span>';
 }
 
 /**
@@ -17,7 +17,7 @@ function lib_databases_get_availability_icon($post) {
  */
 function lib_databases_get_availability_text($post) {
   $custom = get_post_custom($post->ID);
-  $availability = $custom["database_availability"][0];
+  $availability = Library_Databases_Categories::get_availability()->slug;
   switch ($availability) {
     case 'state-wide':
       $text = "Free for all Massachusetts residents. Provided by the Massachusetts Board of Library Commissioners and the Massachusetts Library System.";
@@ -47,7 +47,7 @@ function lib_databases_get_availability_text($post) {
  */
 function lib_databases_is_inaccessible($post) {
   $custom = get_post_custom($post->ID);
-  $availability = $custom["database_availability"][0];
+  $availability = Library_Databases_Categories::get_availability();
   if ($availability == 'in-library' && !lib_databases_user_in_library()) {
     return TRUE;
   }

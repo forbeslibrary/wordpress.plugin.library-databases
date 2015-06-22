@@ -19,6 +19,8 @@ class Library_Databases_Plugin {
   }
 
   function load_dependencies() {
+    require_once( dirname( __FILE__ ) . '/categories.php' );
+    new Library_Databases_Categories();
     require_once( dirname( __FILE__ ) . '/helpers.php' );
     require_once( dirname( __FILE__ ) . '/shortcodes.php' );
     if ( is_admin() ) {
@@ -117,29 +119,6 @@ class Library_Databases_Plugin {
         'singular_label' => 'Research Area',
         'hierarchical' => True,
         'show_ui' => True
-      )
-    );
-
-    register_taxonomy(
-      'lib_databases_categories',
-      'lib_databases',
-      array(
-        'label' => 'Access Categories',
-        'labels' => array(
-          'singular_label' => 'Access Category',
-          'add_new_item' => 'Add Access Category',
-          'edit_item' => 'Edit Access Category',
-          'search_items' => 'Search Access Categories',
-          'popular_items' => NULL
-        ),
-        'hierarchical' => False,
-        'show_ui' => True,
-        'capabilities' => array(
-          'manage_terms' => 'manage_options', // by default only admin
-          'edit_terms' => 'manage_options',
-          'delete_terms' => 'manage_options',
-          'assign_terms' => 'edit_posts'  // means administrator', 'editor', 'author', 'contributor'
-        )
       )
     );
   }

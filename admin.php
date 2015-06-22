@@ -5,8 +5,6 @@
 class Library_Databases_Plugin_Admin {
 
   function __construct() {
-    require_once( dirname( __FILE__ ) . '/categories-admin.php' );
-    new Library_Databases_Categories_Admin();
     add_action('add_meta_boxes', array($this, 'add_meta_boxes'));
     add_action('admin_head', array($this, 'admin_css'));
     add_action('admin_init', array($this, 'init'));
