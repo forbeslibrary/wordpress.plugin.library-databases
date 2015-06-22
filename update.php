@@ -44,7 +44,7 @@ class Library_Databases_Update_Tool {
         if (!term_exists($availability, 'lib_databases_categories')) {
           switch ($availability) {
             case 'state-wide':
-              $name = "Free State Wide.";
+              $name = "Free State Wide";
               break;
             case 'cwmars':
               $name = "Free With C/W Mars Card";
