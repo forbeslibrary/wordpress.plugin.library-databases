@@ -210,7 +210,7 @@ class Library_Databases_Plugin {
     global $post;
 
     if ($post->post_type == 'lib_databases') {
-       $template = dirname( __FILE__ ) . '/single-forbes-database.php';
+       $template = dirname( __FILE__ ) . '/single-library-database.php';
     }
     return $template;
   }
