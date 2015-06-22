@@ -1,27 +1,28 @@
 <?php
 class Library_Databases_Categories_Admin {
+  public $tax_name = 'lib_databases_categories';
+
   function __construct() {
-    $taxonomy = 'lib_databases_categories';
     $actions = array(
       "admin_head" => 'embedUploaderCode',
       "admin_menu" => 'admin_menu',
       "add_meta_boxes" => "add_meta_boxes",
-      "{$taxonomy}_add_form_fields" => 'add_form_fields',
-      "{$taxonomy}_edit_form_fields" => 'edit_form_fields',
-      "create_{$taxonomy}" => 'create',
-      "edit_{$taxonomy}" => 'edit'
+      "{$this->tax_name}_add_form_fields" => 'add_form_fields',
+      "{$this->tax_name}_edit_form_fields" => 'edit_form_fields',
+      "create_{$this->tax_name}" => 'create',
+      "edit_{$this->tax_name}" => 'edit'
     );
     foreach ($actions as $action => $method_name) {
       add_action($action, array($this, $method_name));
     }
 
     add_filter(
-      'manage_edit-lib_databases_categories_columns',
+      "manage_edit-{$this->tax_name}_columns",
       array($this, 'columns')
     );
 
     add_filter(
-      'manage_lib_databases_categories_custom_column',
+      "manage_{$this->tax_name}_custom_column",
       array($this, 'column_content'),
       10, 3
     );
@@ -39,26 +40,35 @@ class Library_Databases_Categories_Admin {
   }
 
   /**
+   * Returns the availability for the current post.
+   */
+  function get_availability() {
+    global $post;
+    $taxonomy = get_taxonomy($this->tax_name);
+
+    $postterms = get_the_terms($post->ID, $this->tax_name);
+    $current = ($postterms ? array_pop($postterms) : false);
+    return ($current ? $current->term_id : 0);
+  }
+
+  /**
    * Returns the html for the database availability box on the lib_databases edit page.
    */
   function output_metabox(){
     global $post;
-    $taxonomy = 'lib_databases_categories';
-    $tax = get_taxonomy($taxonomy);
+    $tax = get_taxonomy($this->tax_name);
 
     //The name of the form
-    $name = "tax_input[$taxonomy]";
+    $name = "tax_input[$this->tax_name]";
 
     //Get all the terms for this taxonomy
-    $terms = get_terms($taxonomy, array('hide_empty' => 0));
+    $terms = get_terms($this->tax_name, array('hide_empty' => 0));
 
-    $postterms = get_the_terms( $post->ID,$taxonomy );
-    $current = ($postterms ? array_pop($postterms) : false);
-    $current = ($current ? $current->term_id : 0);
+    $current = $this->get_availability();
     ?>
-    <ul id="<?php echo $taxonomy; ?>checklist" class="list:<?php echo $taxonomy; ?> categorychecklist form-no-clear">
+    <ul id="<?php echo $this->tax_name; ?>checklist" class="list:<?php echo $this->tax_name; ?> categorychecklist form-no-clear">
       <?php foreach($terms as $term) :?>
-          <?php $id = $taxonomy.'-'.$term->term_id; ?>
+          <?php $id = $this->tax_name.'-'.$term->term_id; ?>
           <li id="<?php echo $id; ?>">
             <label class='selectit'>
               <input type='radio'
@@ -75,7 +85,7 @@ class Library_Databases_Categories_Admin {
   }
 
   function admin_menu() {
-    remove_meta_box('tagsdiv-lib_databases_categories', 'lib_databases', 'side');
+    remove_meta_box("tagsdiv-{$this->tax_name}", 'lib_databases', 'side');
   }
 
   /**
@@ -124,7 +134,7 @@ class Library_Databases_Categories_Admin {
       }
 
       if (!$data) {
-        error_log('No lib_databases_categories data to save');
+        error_log("No {$this->tax_name} data to save");
         return;
       }
 
@@ -255,7 +265,7 @@ class Library_Databases_Categories_Admin {
   function embedUploaderCode() {
     $screen = get_current_screen();
     if ($screen->base != 'edit-tags'
-        or $screen->taxonomy != 'lib_databases_categories') {
+        or $screen->taxonomy != $this->tax_name) {
       return;
     }
     wp_enqueue_media();
