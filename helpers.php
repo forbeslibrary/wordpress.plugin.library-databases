@@ -14,10 +14,12 @@ function lib_databases_get_availability_icon($post) {
 
 /**
  * Returns a statement about the availability and funding source of the database.
+ *
+ * deprecated
  */
 function lib_databases_get_availability_text($post) {
   $custom = get_post_custom($post->ID);
-  $availability = Library_Databases_Categories::get_availability()->slug;
+  $availability = $custom['database_availability'][0];
   switch ($availability) {
     case 'state-wide':
       $text = "Free for all Massachusetts residents. Provided by the Massachusetts Board of Library Commissioners and the Massachusetts Library System.";
@@ -46,9 +48,8 @@ function lib_databases_get_availability_text($post) {
  * Returns TRUE for remote users if the database is in library use only.
  */
 function lib_databases_is_inaccessible($post) {
-  $custom = get_post_custom($post->ID);
-  $availability = Library_Databases_Categories::get_availability();
-  if ($availability == 'in-library' && !lib_databases_user_in_library()) {
+
+  if (Library_Databases_Categories::is_restricted_by_ip() && !lib_databases_user_in_library()) {
     return TRUE;
   }
   return FALSE;
@@ -128,7 +129,7 @@ function lib_databases_display($post) {
     <?php endif; ?>
   <div class="entry-content">
     <?php echo apply_filters('the_content', $post->post_content); ?>
-    <?php $availability_text = lib_databases_get_availability_text($post);
+    <?php $availability_text = Library_Databases_Categories::get_description($post);
     if ($availability_text) { echo '<p class="lib_databases_availability_text">' . $availability_text . '</p>'; } ?>
   </div>
   <?php if (is_user_logged_in()): ?>

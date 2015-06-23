@@ -11,11 +11,11 @@
 class Library_Databases_Plugin {
   function __construct() {
     $this->load_dependencies();
-    register_activation_hook(__FILE__, array($this, 'flush_rewrites'));
-    register_activation_hook(__FILE__, array($this, 'update'));
     $this->add_actions();
     $this->add_filters();
     $this->add_shortcodes();
+    register_activation_hook(__FILE__, array($this, 'flush_rewrites'));
+    register_activation_hook(__FILE__, array($this, 'update'));
   }
 
   function load_dependencies() {
@@ -50,6 +50,8 @@ class Library_Databases_Plugin {
    */
   function flush_rewrites() {
     $this->init();
+    $library_databases_categories = new Library_Databases_Categories();
+    $library_databases_categories->init();
     flush_rewrite_rules();
   }
 

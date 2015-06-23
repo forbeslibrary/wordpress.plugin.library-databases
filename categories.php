@@ -39,13 +39,40 @@ class Library_Databases_Categories {
   }
 
   /**
+   * Returns the description
+   */
+  static function get_description($post = 0) {
+    $post = get_post($post);
+    $term_id = get_availability($post);
+    return term_description( $term_id, self::$tax_name);
+  }
+
+  /**
+   * Returns true if the category is restricted by ip address
+   */
+  static function is_restricted_by_ip($post = 0) {
+    $post = get_post($post);
+    $term = self::get_availability($post);
+    if (!$term) {
+      return;
+    }
+
+    $term_id = $term->term_id;
+    $term_meta = get_option( "taxonomy_{$term_id}" );
+    if (isset($term_meta['library_use_only'])) {
+      return $term_meta['library_use_only'];
+    }
+    return false;
+  }
+
+  /**
    * Returns the availability for the current post.
    */
-  static function get_availability() {
-    global $post;
+  static function get_availability($post = 0) {
+    $post = get_post($post);
     $taxonomy = get_taxonomy(self::$tax_name);
 
     $postterms = get_the_terms($post->ID, self::$tax_name);
-    return ($postterms ? array_pop($postterms) : false);
+    return (is_array($postterms) ? array_pop($postterms) : false);
   }
 }
