@@ -43,7 +43,7 @@ class Library_Databases_Categories {
    */
   static function get_description($post = 0) {
     $post = get_post($post);
-    $term_id = get_availability($post);
+    $term_id = self::get_availability($post)->term_id;
     return term_description( $term_id, self::$tax_name);
   }
 
@@ -70,7 +70,6 @@ class Library_Databases_Categories {
    */
   static function get_availability($post = 0) {
     $post = get_post($post);
-    $taxonomy = get_taxonomy(self::$tax_name);
 
     $postterms = get_the_terms($post->ID, self::$tax_name);
     return (is_array($postterms) ? array_pop($postterms) : false);
