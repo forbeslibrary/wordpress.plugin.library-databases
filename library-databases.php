@@ -21,6 +21,8 @@ class Library_Databases_Plugin {
   function load_dependencies() {
     require_once( dirname( __FILE__ ) . '/categories.php' );
     new Library_Databases_Categories();
+    require_once( dirname( __FILE__ ) . '/research-areas.php' );
+    new Library_Databases_Research_Areas();
     require_once( dirname( __FILE__ ) . '/helpers.php' );
     require_once( dirname( __FILE__ ) . '/shortcodes.php' );
     if ( is_admin() ) {
@@ -70,14 +72,6 @@ class Library_Databases_Plugin {
    * @wp-hook init
    */
   function init() {
-    $this->register_custom_post_types();
-    $this->register_custom_taxonomies();
-  }
-
-  /**
-   * Registers the custom post type lib_databases
-   */
-  function register_custom_post_types() {
     $labels = array(
       'name' => _x('Databases', 'post type general name'),
       'singular_name' => _x('Database', 'post type singular name'),
@@ -107,22 +101,6 @@ class Library_Databases_Plugin {
     );
 
     register_post_type( 'lib_databases' , $args );
-  }
-
-  /**
-   * Registers the custom taxonomies
-   */
-  function register_custom_taxonomies() {
-    register_taxonomy(
-      'lib_databases_research_areas',
-      array('lib_databases'),
-      array(
-        'label' => 'Research Areas',
-        'singular_label' => 'Research Area',
-        'hierarchical' => True,
-        'show_ui' => True
-      )
-    );
   }
 
   /**
