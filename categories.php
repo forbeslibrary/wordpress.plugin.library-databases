@@ -56,6 +56,22 @@ class Library_Databases_Categories {
   }
 
   /**
+   * Returns an image tag for the media for the lib_databases_categories term
+   * associated with a post.
+   *
+   * Uses the current post if none is specified.
+   */
+  static function get_image_for_post($post = 0) {
+    $post = get_post($post);
+    $term_id = self::get_term_for_post($post)->term_id;
+    $term_meta = get_option( "taxonomy_{$term_id}" );
+    if (isset($term_meta['image'])) {
+      return wp_get_attachment_image($term_meta['image'], array(32, 32));
+    }
+    return '';
+  }
+
+  /**
    * Returns true if the lib_databases_categories term associated
    * with a post is restricted by ip.
    *

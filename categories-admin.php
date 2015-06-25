@@ -115,7 +115,7 @@ class Library_Databases_Categories_Admin {
     switch ($column_name) {
       case 'image':
         if (isset($term_meta['image'])) {
-          $value = wp_get_attachment_image($term_meta['image'], array(80, 80));
+          $value = wp_get_attachment_image($term_meta['image'], array(32, 32));
         }
         break;
       case 'library_use_only':

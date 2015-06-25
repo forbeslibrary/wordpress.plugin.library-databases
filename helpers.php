@@ -4,12 +4,10 @@
  */
 
 /**
- * Returns the URL of the availability icon.
+ * Returns image tag for the availability icon.
  */
 function lib_databases_get_availability_icon($post) {
-  $custom = get_post_custom($post->ID);
-  $availability = Library_Databases_Categories::get_term_for_post();
-  return '<span class="lib_database_availability_icon ico_' . $availability->slug . '"> </span>';
+  return Library_Databases_Categories::get_image_for_post();
 }
 
 /**
