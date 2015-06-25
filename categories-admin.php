@@ -1,4 +1,9 @@
 <?php
+/**
+ * Admin code for the custom taxonomy lib_databases_categories
+ *
+ * All necessary hooks are added when a new instance is created
+ */
 class Library_Databases_Categories_Admin {
   static $tax_name = 'lib_databases_categories';
 
@@ -29,6 +34,10 @@ class Library_Databases_Categories_Admin {
     );
   }
 
+  /**
+   * Adds a custom metabox to select a single lib_databases_categories term on
+   * the lib_databases edit page.
+   */
   function add_meta_boxes() {
     add_meta_box(
       "database-availability-meta",
@@ -74,6 +83,9 @@ class Library_Databases_Categories_Admin {
     <?php
   }
 
+  /**
+   * Removes the default lib_databases_categories metabox
+   */
   function admin_menu() {
     $tax_name = self::$tax_name;
     remove_meta_box("tagsdiv-{$tax_name}", 'lib_databases', 'side');

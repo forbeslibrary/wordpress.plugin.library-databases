@@ -1,4 +1,9 @@
 <?php
+/**
+ * Custom taxonomy lib_databases_categories
+ *
+ * All necessary hooks are added when a new instance is created
+ */
 class Library_Databases_Categories {
   static $tax_name = 'lib_databases_categories';
 
@@ -39,7 +44,10 @@ class Library_Databases_Categories {
   }
 
   /**
-   * Returns the description
+   * Returns the description for the lib_databases_categories term associated
+   * with a post.
+   *
+   * Uses the current post if none is specified.
    */
   static function get_description($post = 0) {
     $post = get_post($post);
@@ -48,7 +56,10 @@ class Library_Databases_Categories {
   }
 
   /**
-   * Returns true if the category is restricted by ip address
+   * Returns true if the lib_databases_categories term associated
+   * with a post is restricted by ip.
+   *
+   * Uses the current post if none is specified.
    */
   static function is_restricted_by_ip($post = 0) {
     $post = get_post($post);
@@ -66,7 +77,9 @@ class Library_Databases_Categories {
   }
 
   /**
-   * Returns the availability for the current post.
+   * Returns the lib_databases_categories term for a post.
+   *
+   * Uses the current post if none is specified.
    */
   static function get_availability($post = 0) {
     $post = get_post($post);

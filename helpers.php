@@ -15,7 +15,7 @@ function lib_databases_get_availability_icon($post) {
 /**
  * Returns a statement about the availability and funding source of the database.
  *
- * deprecated
+ * deprecated. Should not be called by new code, but still used by update.php
  */
 function lib_databases_get_availability_text($post) {
   $custom = get_post_custom($post->ID);

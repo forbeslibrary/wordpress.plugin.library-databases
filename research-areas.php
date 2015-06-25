@@ -1,4 +1,9 @@
 <?php
+/**
+ * Custom taxonomy lib_databases_research_areas
+ *
+ * All necessary hooks are added when a new instance is created
+ */
 class Library_Databases_Research_Areas {
   static $tax_name = 'lib_databases_research_areas';
 
