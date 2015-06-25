@@ -8,7 +8,7 @@
  */
 function lib_databases_get_availability_icon($post) {
   $custom = get_post_custom($post->ID);
-  $availability = Library_Databases_Categories::get_availability();
+  $availability = Library_Databases_Categories::get_term_for_post();
   return '<span class="lib_database_availability_icon ico_' . $availability->slug . '"> </span>';
 }
 
@@ -49,7 +49,7 @@ function lib_databases_get_availability_text($post) {
  */
 function lib_databases_is_inaccessible($post) {
 
-  if (Library_Databases_Categories::is_restricted_by_ip() && !lib_databases_user_in_library()) {
+  if (Library_Databases_Categories::is_post_restricted_by_ip() && !lib_databases_user_in_library()) {
     return TRUE;
   }
   return FALSE;
@@ -129,7 +129,7 @@ function lib_databases_display($post) {
     <?php endif; ?>
   <div class="entry-content">
     <?php echo apply_filters('the_content', $post->post_content); ?>
-    <?php $availability_text = Library_Databases_Categories::get_description($post);
+    <?php $availability_text = Library_Databases_Categories::get_description_for_post($post);
     if ($availability_text) { echo '<p class="lib_databases_availability_text">' . $availability_text . '</p>'; } ?>
   </div>
   <?php if (is_user_logged_in()): ?>

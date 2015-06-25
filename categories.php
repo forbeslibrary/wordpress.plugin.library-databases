@@ -49,9 +49,9 @@ class Library_Databases_Categories {
    *
    * Uses the current post if none is specified.
    */
-  static function get_description($post = 0) {
+  static function get_description_for_post($post = 0) {
     $post = get_post($post);
-    $term_id = self::get_availability($post)->term_id;
+    $term_id = self::get_term_for_post($post)->term_id;
     return term_description( $term_id, self::$tax_name);
   }
 
@@ -61,9 +61,9 @@ class Library_Databases_Categories {
    *
    * Uses the current post if none is specified.
    */
-  static function is_restricted_by_ip($post = 0) {
+  static function is_post_restricted_by_ip($post = 0) {
     $post = get_post($post);
-    $term = self::get_availability($post);
+    $term = self::get_term_for_post($post);
     if (!$term) {
       return;
     }
@@ -81,7 +81,7 @@ class Library_Databases_Categories {
    *
    * Uses the current post if none is specified.
    */
-  static function get_availability($post = 0) {
+  static function get_term_for_post($post = 0) {
     $post = get_post($post);
 
     $postterms = get_the_terms($post->ID, self::$tax_name);

@@ -63,7 +63,7 @@ class Library_Databases_Categories_Admin {
     //Get all the terms for this taxonomy
     $terms = get_terms($tax_name, array('hide_empty' => 0));
 
-    $current = Library_Databases_Categories::get_availability()->term_id;
+    $current = Library_Databases_Categories::get_term_for_post()->term_id;
     ?>
     <ul id="<?php echo $tax_name; ?>checklist" class="list:<?php echo $tax_name; ?> categorychecklist form-no-clear">
       <?php foreach($terms as $term) :?>
