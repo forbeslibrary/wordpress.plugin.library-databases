@@ -115,47 +115,6 @@ class Library_Databases_Plugin {
       #content .lib_databases_database_unavailable span { font-size:small; }
       #content .lib_databases_availability_text { font-style:italic; color:#555; }
       #content .lib_databases_availability_text a { font-weight:bold; }
-      .ico_in-library, .ico_state-wide, .ico_cwmars, .ico_bpl-ecard, .ico_forbes-card, .ico_anywhere {
-        display: inline-block;
-        background-image: url(<?php echo plugins_url('img/database-availability.png',__FILE__ )?>);
-        background-repeat: no-repeat
-      }
-
-      .ico_in-library {
-        background-position: -0px -0px;
-        height: 69px;
-        width: 64px
-      }
-
-      .ico_state-wide {
-        background-position: -64px -0px;
-        height: 64px;
-        width: 64px
-      }
-
-      .ico_cwmars {
-        background-position: -128px -0px;
-        height: 64px;
-        width: 64px
-      }
-
-      .ico_bpl-ecard {
-        background-position: -0px -69px;
-        height: 64px;
-        width: 64px
-      }
-
-      .ico_forbes-card {
-        background-position: -64px -69px;
-        height: 64px;
-        width: 64px
-      }
-
-      .ico_anywhere {
-        background-position: -128px -69px;
-        height: 64px;
-        width: 64px
-      }
     </style>
     <?php
   }
