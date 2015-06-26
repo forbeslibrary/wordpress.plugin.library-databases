@@ -59,6 +59,8 @@ class Library_Databases_Plugin {
 
   /**
    * Update the plugin
+   *
+   * This is registered with register_activation_hook for this file
    */
   function update() {
     require_once( dirname( __FILE__ ) . '/update.php' );
