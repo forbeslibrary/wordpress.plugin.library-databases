@@ -44,26 +44,18 @@ class Library_Databases_Categories {
   }
 
   /**
-   * Returns the description for the lib_databases_categories term associated
-   * with a post.
-   *
-   * Uses the current post if none is specified.
+   * Returns the description for the lib_databases_categories term with the
+   * given id.
    */
-  static function get_description_for_post($post = 0) {
-    $post = get_post($post);
-    $term_id = self::get_term_for_post($post)->term_id;
+  static function get_description($term_id) {
     return term_description( $term_id, self::$tax_name);
   }
 
   /**
    * Returns an image tag for the media for the lib_databases_categories term
-   * associated with a post.
-   *
-   * Uses the current post if none is specified.
+   * with the given id.
    */
-  static function get_image_for_post($post = 0) {
-    $post = get_post($post);
-    $term_id = self::get_term_for_post($post)->term_id;
+  static function get_image($term_id) {
     $term_meta = get_option( "taxonomy_{$term_id}" );
     if (isset($term_meta['image'])) {
       return wp_get_attachment_image($term_meta['image'], array(32, 32));
@@ -73,34 +65,13 @@ class Library_Databases_Categories {
 
   /**
    * Returns true if the lib_databases_categories term associated
-   * with a post is restricted by ip.
-   *
-   * Uses the current post if none is specified.
+   * with the given id is restricted by IP address.
    */
-  static function is_post_restricted_by_ip($post = 0) {
-    $post = get_post($post);
-    $term = self::get_term_for_post($post);
-    if (!$term) {
-      return;
-    }
-
-    $term_id = $term->term_id;
+  static function is_restricted_by_ip($term_id) {
     $term_meta = get_option( "taxonomy_{$term_id}" );
     if (isset($term_meta['library_use_only'])) {
       return $term_meta['library_use_only'];
     }
     return false;
-  }
-
-  /**
-   * Returns the lib_databases_categories term for a post.
-   *
-   * Uses the current post if none is specified.
-   */
-  static function get_term_for_post($post = 0) {
-    $post = get_post($post);
-
-    $postterms = get_the_terms($post->ID, self::$tax_name);
-    return (is_array($postterms) ? array_pop($postterms) : false);
   }
 }

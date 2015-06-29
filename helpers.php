@@ -6,8 +6,8 @@ class Library_Databases_Helpers {
   /**
    * Returns image tag for the availability icon.
    */
-  static function lib_databases_get_availability_icon($post) {
-    return Library_Databases_Categories::get_image_for_post();
+  static function get_availability_icon($post) {
+    return self::get_image_for_post();
   }
 
   /**
@@ -47,7 +47,7 @@ class Library_Databases_Helpers {
    */
   static function is_inaccessible($post) {
 
-    if (Library_Databases_Categories::is_post_restricted_by_ip() && !self::user_in_library()) {
+    if (self::is_post_restricted_by_ip() && !self::user_in_library()) {
       return TRUE;
     }
     return FALSE;
@@ -106,7 +106,7 @@ class Library_Databases_Helpers {
   static function display($post) {
     ob_start();?>
     <article id="post-<?php the_ID(); ?>" class="lib_databases post hentry">
-      <?php if (lib_databases_is_inaccessible(get_post())): ?>
+      <?php if (self::is_inaccessible(get_post())): ?>
       <h2 class="entry-title lib_databases_database_unavailable">
         <?php echo self::get_availability_icon($post); ?>
         <?php the_title(); ?>
@@ -127,7 +127,7 @@ class Library_Databases_Helpers {
       <?php endif; ?>
     <div class="entry-content">
       <?php echo apply_filters('the_content', $post->post_content); ?>
-      <?php $availability_text = Library_Databases_Categories::get_description_for_post($post);
+      <?php $availability_text = self::get_description_for_post($post);
       if ($availability_text) { echo '<p class="lib_databases_availability_text">' . $availability_text . '</p>'; } ?>
     </div>
     <?php if (is_user_logged_in()): ?>
@@ -135,6 +135,54 @@ class Library_Databases_Helpers {
     <?php endif; ?>
     </article><?php
     return ob_get_clean();
+  }
+
+  /**
+   * Returns the description for the lib_databases_categories term associated
+   * with a post.
+   *
+   * Uses the current post if none is specified.
+   */
+  static function get_description_for_post($post = 0) {
+    $post = get_post($post);
+    $term_id = self::get_term_for_post($post)->term_id;
+    return Library_Databases_Categories::get_description($term_id);
+  }
+
+  /**
+   * Returns an image tag for the media for the lib_databases_categories term
+   * associated with a post.
+   *
+   * Uses the current post if none is specified.
+   */
+  static function get_image_for_post($post = 0) {
+    $post = get_post($post);
+    $term_id = self::get_term_for_post($post)->term_id;
+    return Library_Databases_Categories::get_image($term_id);
+  }
+
+  /**
+   * Returns true if the lib_databases_categories term associated
+   * with a post is restricted by ip.
+   *
+   * Uses the current post if none is specified.
+   */
+  static function is_post_restricted_by_ip($post = 0) {
+    $post = get_post($post);
+    $term_id = self::get_term_for_post($post)->term_id;
+    return Library_Databases_Categories::is_restricted_by_ip($term_id);
+  }
+
+  /**
+   * Returns the lib_databases_categories term for a post.
+   *
+   * Uses the current post if none is specified.
+   */
+  static function get_term_for_post($post = 0) {
+    $post = get_post($post);
+
+    $postterms = get_the_terms($post->ID, Library_Databases_Categories::$tax_name);
+    return (is_array($postterms) ? array_pop($postterms) : false);
   }
 
   /**
