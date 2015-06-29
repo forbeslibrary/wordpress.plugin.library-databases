@@ -173,9 +173,6 @@ class Library_Databases_Plugin_Admin {
     if (isset($_POST["database_home_use_url"])) {
       update_post_meta($post->ID, "database_home_use_url", $_POST["database_home_use_url"]);
     }
-    if (isset($_POST["database_availability"])) {
-      update_post_meta($post->ID, "database_availability", $_POST["database_availability"]);
-    }
   }
 
   /**
