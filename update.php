@@ -62,7 +62,7 @@ class Library_Databases_Update_Tool {
               $name = 'Free Anywhere';
           }
           $args = array(
-            'description' => lib_databases_get_availability_text($post),
+            'description' => Library_Databases_Helpers::get_availability_text($post),
             'slug' => $availability
           );
           wp_insert_term($name, 'lib_databases_categories', $args);

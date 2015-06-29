@@ -11,13 +11,13 @@ class Library_Databases_Shortcodes {
    */
   function lib_database_list( $atts, $content = null ) {
     if (is_search()) { return ''; }
-    $the_query = lib_databases_query($atts);
+    $the_query = Library_Databases_Helpers::query($atts);
 
     ob_start();
     if ( $the_query->have_posts() ) {
       while ( $the_query->have_posts() ) {
         $the_query->the_post();
-        echo lib_databases_display(get_post());
+        echo Library_Databases_Helpers::display(get_post());
       }
     } else {
       echo 'no databases found';
@@ -34,7 +34,7 @@ class Library_Databases_Shortcodes {
    */
   function lib_database_select( $atts, $content = null ) {
     if (is_search()) { return ''; }
-    $the_query = lib_databases_query($atts);
+    $the_query = Library_Databases_Helpers::query($atts);
 
     $menu_data = array();
 
@@ -43,12 +43,12 @@ class Library_Databases_Shortcodes {
         $the_query->the_post();
         $menu_option = array(
           'title' => get_the_title(),
-          'url' => lib_databases_get_database_url(get_post()),
+          'url' => Library_Databases_Helpers::get_database_url(get_post()),
         );
-  			if (lib_databases_requires_bpl_card(get_post())) {
+  			if (Library_Databases_Helpers::requires_bpl_card(get_post())) {
   			  $menu_option['title'] = $menu_option['title'] . ' (with BPL eCard)';
   			}
-        if (lib_databases_is_inaccessible(get_post())) {
+        if (Library_Databases_Helpers::is_inaccessible(get_post())) {
           $menu_option['title'] = $menu_option['title'] . ' (available in library)';
           $menu_option['disabled'] = TRUE;
         }
