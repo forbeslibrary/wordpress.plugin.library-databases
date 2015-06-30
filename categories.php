@@ -64,7 +64,7 @@ class Library_Databases_Categories {
   }
 
   /**
-   * Returns the title postfix for select menu_position
+   * Returns the title postfix for select menus
    */
   static function get_postfix($term_id) {
     $term_meta = get_option( "taxonomy_{$term_id}" );
