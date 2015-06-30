@@ -9,6 +9,7 @@ class Library_Databases_Categories {
 
   function __construct() {
     add_action('init', array($this, 'init'));
+    add_filter('term_description', array($this, 'modify_term_description_filters'), 0, 4);
     if (is_admin()) {
       require_once( dirname( __FILE__ ) . '/categories-admin.php' );
       new Library_Databases_Categories_Admin();
@@ -41,6 +42,16 @@ class Library_Databases_Categories {
         )
       )
     );
+  }
+
+  /**
+   * Modify the term description filters.
+   */
+  function modify_term_description_filters($description, $term_id, $taxonomy, $context) {
+    if ($taxonomy == self::$tax_name && $context == 'display') {
+      remove_filter('term_description','wpautop');
+    }
+    return $description;
   }
 
   /**

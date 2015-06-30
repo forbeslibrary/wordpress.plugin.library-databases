@@ -127,8 +127,12 @@ class Library_Databases_Helpers {
       <?php endif; ?>
     <div class="entry-content">
       <?php echo apply_filters('the_content', $post->post_content); ?>
-      <?php $availability_text = self::get_description_for_post($post);
-      if ($availability_text) { echo '<p class="lib_databases_availability_text">' . $availability_text . '</p>'; } ?>
+      <?php $availability_text = self::get_description_for_post($post); ?>
+      <?php if ($availability_text): ?>
+        <p class="lib_databases_availability_text">
+          <?php echo $availability_text; ?>
+        </p>
+      <?php endif; ?>
     </div>
     <?php if (is_user_logged_in()): ?>
       <footer class="entry-utility"><span class="edit-link"><?php edit_post_link('Edit Database'); ?></span></footer>
