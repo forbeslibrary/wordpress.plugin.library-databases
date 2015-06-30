@@ -64,6 +64,17 @@ class Library_Databases_Categories {
   }
 
   /**
+   * Returns the title postfix for select menu_position
+   */
+  static function get_postfix($term_id) {
+    $term_meta = get_option( "taxonomy_{$term_id}" );
+    if (isset($term_meta['postfix'])) {
+      return $term_meta['postfix'];
+    }
+    return '';
+  }
+
+  /**
    * Returns true if the lib_databases_categories term associated
    * with the given id is restricted by IP address.
    */

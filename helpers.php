@@ -162,6 +162,18 @@ class Library_Databases_Helpers {
   }
 
   /**
+   * Returns the title postfix for select menus for the lib_databases_categories
+   * term associated with a post.
+   *
+   * Uses the current post if none is specified.
+   */
+  static function get_postfix_for_post($post = 0) {
+    $post = get_post($post);
+    $term_id = self::get_term_for_post($post)->term_id;
+    return Library_Databases_Categories::get_postfix($term_id);
+  }
+
+  /**
    * Returns true if the lib_databases_categories term associated
    * with a post is restricted by ip.
    *

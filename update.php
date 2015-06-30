@@ -65,7 +65,13 @@ class Library_Databases_Update_Tool {
             'description' => Library_Databases_Helpers::get_availability_text($post),
             'slug' => $availability
           );
-          wp_insert_term($name, 'lib_databases_categories', $args);
+          $result = wp_insert_term($name, 'lib_databases_categories', $args);
+          $term_id = $result['term_id'];
+          if ($availability == 'bpl-ecard') {
+            $term_meta = get_option( "taxonomy_{$term_id}" );
+            $term_meta['postfix'] = '(with BPL eCard)';
+            update_option( "taxonomy_{$term_id}", $term_meta );
+          }
         }
         wp_set_object_terms($post->ID, $availability, 'lib_databases_categories');
       }

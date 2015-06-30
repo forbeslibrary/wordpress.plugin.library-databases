@@ -45,8 +45,9 @@ class Library_Databases_Shortcodes {
           'title' => get_the_title(),
           'url' => Library_Databases_Helpers::get_database_url(get_post()),
         );
-  			if (Library_Databases_Helpers::requires_bpl_card(get_post())) {
-  			  $menu_option['title'] = $menu_option['title'] . ' (with BPL eCard)';
+        $postfix = Library_Databases_Helpers::get_postfix_for_post(get_post());
+  			if ($postfix) {
+  			  $menu_option['title'] = $menu_option['title'] . ' ' . $postfix;
   			}
         if (Library_Databases_Helpers::is_inaccessible(get_post())) {
           $menu_option['title'] = $menu_option['title'] . ' (available in library)';
