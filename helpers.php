@@ -54,20 +54,6 @@ class Library_Databases_Helpers {
   }
 
   /**
-   * Does the database require a BPL card?
-   *
-   * Returns TRUE for remote users if the database is provided by BPL.
-   */
-  function requires_bpl_card($post) {
-    $custom = get_post_custom($post->ID);
-    $availability = $custom["database_availability"][0];
-    if ($availability == 'bpl-ecard') {
-      return TRUE;
-    }
-    return FALSE;
-  }
-
-  /**
    * Is the user in the library?
    */
   static function user_in_library() {
