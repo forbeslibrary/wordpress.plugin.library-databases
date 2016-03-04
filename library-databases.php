@@ -6,6 +6,8 @@
  * Author URI: https://github.com/bkalish
  * Description: Provides easy access to and organization of a library databases and other electronic resources on the web.
  * Version: 1.0.0-dev
+ * License: GNU General Public License v2
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 
 class Library_Databases_Plugin {
