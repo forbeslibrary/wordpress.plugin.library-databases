@@ -119,6 +119,7 @@ class Library_Databases_Plugin {
       #content .lib_databases_database_unavailable span { font-size:small; }
       #content .lib_databases_availability_text { font-style:italic; color:#555; }
       #content .lib_databases_availability_text a { font-weight:bold; }
+      #content .lib_databases_category_image { vertical-align: middle; }
     </style>
     <?php
   }

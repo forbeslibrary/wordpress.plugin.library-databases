@@ -75,7 +75,7 @@ class Library_Databases_Categories {
         'full',
         'true',
         array(
-          'class' => 'library-databases-category-image',
+          'class' => 'lib_databases_category_image',
           'alt' => $term->name
         )
       );
