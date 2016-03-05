@@ -62,6 +62,7 @@ class Library_Databases_Shortcodes {
     <div id="lib_databases_nav"></div>
     <script>
     jQuery("#lib_databases_nav").append('<label for="lib_databases_select">Database Quick Access</label>');
+    jQuery("#lib_databases_nav").append(' ');
     jQuery("#lib_databases_nav").append('<select id="lib_databases_select"><option>—Select a Database—</option></select>');
     options = jQuery.map(JSON.parse('<?php echo json_encode($menu_data); ?>'), function( value, index ) {
        option = jQuery('<option></option>');
