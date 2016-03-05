@@ -68,8 +68,17 @@ class Library_Databases_Categories {
    */
   static function get_image($term_id) {
     $term_meta = get_option( "taxonomy_{$term_id}" );
+    $term = get_term($term_id);
     if (isset($term_meta['image'])) {
-      return wp_get_attachment_image($term_meta['image'], array(32, 32));
+      return wp_get_attachment_image(
+        $term_meta['image'],
+        'full',
+        'true',
+        array(
+          'class' => 'library-databases-category-image',
+          'alt' => $term->name
+        )
+      );
     }
     return '';
   }
