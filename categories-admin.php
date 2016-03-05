@@ -314,7 +314,7 @@ class Library_Databases_Categories_Admin {
         custom_uploader.on('select', function() {
           var attachment = custom_uploader.state().get('selection').first().toJSON();
           hidden_field.val(attachment.id);
-          var thumb = jQuery('<img>').attr('src', attachment.sizes.thumbnail.url);
+          var thumb = jQuery('<img>').attr('src', attachment.url);
           image_wrapper.html(thumb);
           remove_button.show();
         });
