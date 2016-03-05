@@ -16,4 +16,4 @@ the plugin since it's name has changed (from Forbes Databases to Library Databas
 Users with administrator access can set the IP Addresses to be considered 'in library' on the settings page found under `Settings > Library Databases`.
 
 ### Shortcodes
-To include a list of databases on a page use the shortcode `[forbes_database_list]`, optionally with the research_area parameter, e.g. `[forbes_database_list research_area="business"]`.
+To include a list of databases on a page use the shortcode `[lib_database_list]`, optionally with the research_area parameter, e.g. `[lib_database_list research_area="business"]`.
