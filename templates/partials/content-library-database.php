@@ -15,11 +15,13 @@ Description: Displays the content of a single library database
   <h2 class="entry-title">
     <a href="<?php echo Library_Databases_Helpers::get_database_url($post); ?>">
     <?php echo Library_Databases_Helpers::get_availability_icon($post); ?>
-    <?php the_title(); ?>
     <?php if (has_post_thumbnail( $post->ID )) {
       $image_attributes = wp_get_attachment_image_src( get_post_thumbnail_id(), 'thumbnail');
       $feature_image_url = $image_attributes[0];
-      echo "<img src=\"$feature_image_url\" class=\"lib_database_feature_icon\">";
+      $title = get_the_title();
+      echo "<img src=\"$feature_image_url\" class=\"lib_database_feature_icon\" alt=\"$title\" title=\"$title\">";
+  } else {
+    the_title();
   }?>
   </a>
   </h2>
