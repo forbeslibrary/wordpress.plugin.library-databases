@@ -7,11 +7,21 @@ class Library_Databases_Update_Tool {
    * Migrate data from earlier versions
    */
   function update() {
-    $version = get_option('lib_databases_version');
-
-    if (!$version) {
+    if (!get_option('lib_databases_version')) {
       $this->update_to_1_0_0();
     }
+    if (version_compare(get_option('lib_databases_version'), "1.0.1", "<")) {
+      $this->update_to_1_0_1();
+    }
+  }
+
+  /**
+   * Migrate to v1.0.1
+   *
+   * Bug fix update.
+   */
+  function update_to_1_0_1() {
+    update_option( 'lib_databases_version', '1.0.1' );
   }
 
   /**
@@ -26,6 +36,7 @@ class Library_Databases_Update_Tool {
     $this->update_availability_for_1_0_0();
     $this->update_settings_for_1_0_0();
     $this->update_shortcodes_for_1_0_0();
+    update_option( 'lib_databases_version', '1.0.0' );
   }
 
   function update_availability_for_1_0_0() {
@@ -106,9 +117,6 @@ class Library_Databases_Update_Tool {
   }
 
   function update_settings_for_1_0_0() {
-    /*if (!get_option('lib_databases_settings_ip_addresses')) {
-      update_option('lib_databases_settings_ip_addresses', get_option('forbes_databases_settings_ip_addresses'));
-    }*/
     global $wpdb;
     $wpdb->update(
       $wpdb->options,

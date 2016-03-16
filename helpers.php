@@ -155,33 +155,4 @@ class Library_Databases_Helpers {
     $postterms = get_the_terms($post->ID, Library_Databases_Categories::$tax_name);
     return (is_array($postterms) ? array_pop($postterms) : false);
   }
-
-  /**
-   * Returns a wp_query object for the passed shortcode attributes.
-   */
-  static function query($atts) {
-    extract( shortcode_atts( array(
-      'research_area' => null,
-      'exclude_free' => null,
-    ), $atts ) );
-
-    $query_args = array(
-      'post_type' => 'lib_databases',
-      'orderby' => 'title',
-      'order' => 'ASC',
-      'posts_per_page'=>-1,
-      );
-
-    if ($research_area) {
-      $query_args['tax_query'] = array( array('taxonomy' => 'lib_databases_research_areas', 'field'=>'slug', 'include_children'=>FALSE, 'terms' => $research_area) );
-    }
-
-    if ($exclude_free) {
-      $query_args['meta_query'] = array( array('key' => 'database_availability', 'value'=>'anywhere', 'compare'=>'!=') );
-    }
-
-    $the_query = new WP_Query( $query_args );
-
-    return $the_query;
-  }
 }

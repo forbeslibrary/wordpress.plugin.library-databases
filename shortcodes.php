@@ -11,7 +11,7 @@ class Library_Databases_Shortcodes {
    */
   function lib_database_list( $atts, $content = null ) {
     if (is_search()) { return ''; }
-    $the_query = Library_Databases_Helpers::query($atts);
+    $the_query = self::query($atts);
 
     ob_start();
     if ( $the_query->have_posts() ) {
@@ -34,7 +34,7 @@ class Library_Databases_Shortcodes {
    */
   function lib_database_select( $atts, $content = null ) {
     if (is_search()) { return ''; }
-    $the_query = Library_Databases_Helpers::query($atts);
+    $the_query = self::query($atts);
 
     $menu_data = array();
 
@@ -80,4 +80,43 @@ class Library_Databases_Shortcodes {
 
     return ob_get_clean();
   }
+
+  /**
+   * Returns a wp_query object for the passed shortcode attributes.
+   */
+  static function query($atts) {
+    extract( shortcode_atts( array(
+      'research_area' => null,
+      'exclude_category' => null,
+    ), $atts ) );
+
+    $query_args = array(
+      'post_type' => 'lib_databases',
+      'orderby' => 'title',
+      'order' => 'ASC',
+      'posts_per_page'=>-1,
+      );
+
+    if ($research_area) {
+      $query_args['tax_query'] = array( array(
+        'taxonomy' => 'lib_databases_research_areas',
+        'field'=>'slug',
+        'include_children'=>FALSE,
+        'terms' => $research_area) );
+    }
+
+    if ($exclude_category) {
+      $query_args['tax_query'] = array( array(
+        'taxonomy' => 'lib_databases_categories',
+        'field'=>'slug',
+        'include_children'=>FALSE,
+        'terms' => $exclude_category,
+        'operator' => 'NOT IN') );
+    }
+
+    $the_query = new WP_Query( $query_args );
+
+    return $the_query;
+  }
+
 }
