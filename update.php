@@ -10,8 +10,8 @@ class Library_Databases_Update_Tool {
     if (!get_option('lib_databases_version')) {
       $this->update_to_1_0_0();
     }
-    if (version_compare(get_option('lib_databases_version'), "1.0.1", "<")) {
-      $this->update_to_1_0_1();
+    if (version_compare(get_option('lib_databases_version'), "1.0.2", "<")) {
+      $this->update_to_1_0_2();
     }
   }
 
@@ -20,8 +20,8 @@ class Library_Databases_Update_Tool {
    *
    * Bug fix update.
    */
-  function update_to_1_0_1() {
-    update_option( 'lib_databases_version', '1.0.1' );
+  function update_to_1_0_2() {
+    update_option( 'lib_databases_version', '1.0.2' );
   }
 
   /**
@@ -77,11 +77,13 @@ class Library_Databases_Update_Tool {
             'slug' => $availability
           );
           $result = wp_insert_term($name, 'lib_databases_categories', $args);
-          $term_id = $result['term_id'];
-          if ($availability == 'bpl-ecard') {
-            $term_meta = get_option( "taxonomy_{$term_id}" );
-            $term_meta['postfix'] = '(with BPL eCard)';
-            update_option( "taxonomy_{$term_id}", $term_meta );
+          if (is_array($result)) {
+            $term_id = $result['term_id'];
+            if ($availability == 'bpl-ecard') {
+              $term_meta = get_option( "taxonomy_{$term_id}" );
+              $term_meta['postfix'] = '(with BPL eCard)';
+              update_option( "taxonomy_{$term_id}", $term_meta );
+            }
           }
         }
         wp_set_object_terms($post->ID, $availability, 'lib_databases_categories');
