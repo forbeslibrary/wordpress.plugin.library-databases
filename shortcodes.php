@@ -33,6 +33,14 @@ class Library_Databases_Shortcodes {
    * @wp-hook add_shortcode lib_database_select
    */
   function lib_database_select( $atts, $content = null ) {
+    extract( shortcode_atts( array(
+      'title' => 'Database Quick Access',
+      'select_message' => 'Select a Database',
+    ), $atts ) );
+
+    static $count = 0;
+    $count++;
+
     if (is_search()) { return ''; }
     $the_query = self::query($atts);
 
@@ -59,11 +67,13 @@ class Library_Databases_Shortcodes {
     wp_reset_postdata();
 
     ob_start();?>
-    <div id="lib_databases_nav"></div>
+    <div id="<?php echo "lib_databases_nav_$count"; ?>"></div>
     <script>
-    jQuery("#lib_databases_nav").append('<label for="lib_databases_select">Database Quick Access</label>');
-    jQuery("#lib_databases_nav").append(' ');
-    jQuery("#lib_databases_nav").append('<select id="lib_databases_select"><option>—Select a Database—</option></select>');
+    var nav_id = "lib_databases_nav_<?php echo $count; ?>";
+    var select_id = "lib_databases_select_<?php echo $count; ?>";
+    jQuery('#' + nav_id).append('<label for="' + select_id + '"><?php echo $title; ?></label>');
+    jQuery('#' + nav_id).append(' ');
+    jQuery('#' + nav_id).append('<select id="' + select_id + '"><option>—<?php echo $select_message; ?>—</option></select>');
     options = jQuery.map(JSON.parse('<?php echo json_encode($menu_data); ?>'), function( value, index ) {
        option = jQuery('<option></option>');
        option.html(value.title);
@@ -71,9 +81,9 @@ class Library_Databases_Shortcodes {
        if (value.disabled) { option.attr('disabled','disabled'); }
        return option;
     });
-    jQuery("#lib_databases_select").append(options);
-    jQuery("#lib_databases_select").change(function() {
-      window.location = jQuery("#lib_databases_select option:selected").val();
+    jQuery('#' + select_id).append(options);
+    jQuery('#' + select_id).change(function() {
+      window.location = jQuery('#' + select_id + ' option:selected').val();
     });
     </script>
     <?php
