@@ -73,7 +73,7 @@ class Library_Databases_Shortcodes {
     var select_id = "lib_databases_select_<?php echo $count; ?>";
     jQuery('#' + nav_id).append('<label for="' + select_id + '"><?php echo $title; ?></label>');
     jQuery('#' + nav_id).append(' ');
-    jQuery('#' + nav_id).append('<select id="' + select_id + '"><option>—<?php echo $select_message; ?>—</option></select>');
+    jQuery('#' + nav_id).append('<select id="' + select_id + '"><option><?php echo $select_message; ?></option></select>');
     options = jQuery.map(JSON.parse('<?php echo json_encode($menu_data); ?>'), function( value, index ) {
        option = jQuery('<option></option>');
        option.html(value.title);
