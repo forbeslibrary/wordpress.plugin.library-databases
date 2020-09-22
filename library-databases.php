@@ -148,6 +148,8 @@ class Library_Databases_Plugin {
       $query->set( 'order', 'ASC' );
       //Set the orderby
       $query->set( 'orderby', 'title' );
+      //Show all Databases
+      $query->set( 'nopaging', true );
     }
   }
 }
