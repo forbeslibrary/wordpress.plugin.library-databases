@@ -8,7 +8,7 @@ get_header(); ?>
 	<div id="content" role="main">
 
 		<?php the_post(); ?>
-		<h1 class="entry-title"><?php the_title(); ?></h1>
+		<h1 class="entry-title"><?php get_post_type()->labels->name; ?></h1>
 
 		<?php if ( have_posts() ) {
 			while ( have_posts() ) {
