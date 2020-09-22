@@ -4,7 +4,7 @@ Template Name: Single Library Database
 */
 $post = get_post();
 $archive_link = get_post_type_archive_link( $post->post_type );
-$name = get_post_type($post)->labels->name;
+$name = get_post_type_object($post->post_type)->labels->name;
 
 get_header();
 ?>
