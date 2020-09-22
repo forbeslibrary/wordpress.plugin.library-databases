@@ -5,7 +5,7 @@
  * Author: Benjamin Kalish
  * Author URI: https://github.com/bkalish
  * Description: Provides easy access to and organization of a library databases and other electronic resources on the web.
- * Version: 1.0.5
+ * Version: 1.1.0
  * License: GNU General Public License v2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -96,7 +96,7 @@ class Library_Databases_Plugin {
       'publicly_queryable' => true,
       'show_ui' => true,
       'query_var' => true,
-      'rewrite' =>  true,
+      'rewrite' =>  array('slug' => 'database', with_front => 'false'),
       'capability_type' => 'post',
       'hierarchical' => false,
       'menu_icon' => 'dashicons-admin-site',
