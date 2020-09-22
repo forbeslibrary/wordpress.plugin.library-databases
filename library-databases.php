@@ -41,6 +41,7 @@ class Library_Databases_Plugin {
 
   function add_filters() {
     add_filter('single_template', array($this, 'single_template'));
+    add_filter('archive_template', array($this, 'archive_template'));
   }
 
   function add_shortcodes() {
@@ -136,13 +137,27 @@ class Library_Databases_Plugin {
     global $post;
 
     if ($post->post_type == 'lib_databases') {
-       $template = dirname( __FILE__ ) . '/templates/single-library-database.php';
+       $template = dirname( __FILE__ ) . '/templates/single-lib-databases.php';
     }
     return $template;
   }
 
   /**
-   * Show all databases in alphabetical order on archive page. 
+   * Use a special template for showing the lib_database archives.
+   *
+   * @wp-hook archive_template
+   */
+  function archive_template($template){
+    global $post;
+
+    if ($post->post_type == 'lib_databases') {
+       $template = dirname( __FILE__ ) . '/templates/archive-lib-databases.php';
+    }
+    return $template;
+  }
+
+  /**
+   * Show all databases in alphabetical order on archive page.
    *
    * @wp-hook pre_get_posts
    */
