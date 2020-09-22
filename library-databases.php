@@ -142,8 +142,8 @@ class Library_Databases_Plugin {
   }
 
 
-  function archive_page_sort_order($query){
-    if (is_post_type_archive( 'lib_databases' )) {
+  function archive_sort_order($query){
+    if (! is_admin() && $query->is_main_query() && is_post_type_archive( 'lib_databases' )) {
       //Set the order ASC or DESC
       $query->set( 'order', 'ASC' );
       //Set the orderby
