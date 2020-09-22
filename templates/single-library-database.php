@@ -8,7 +8,7 @@ $name = get_post_type()->labels->name;
 
 get_header();
 ?>
-<div class="crumbs breadcrumbs"><a href="<?php echo $archive_link; ?>:>
+<div class="crumbs breadcrumbs"><a href="<?php echo $archive_link; ?>">
 <?php echo $name; ?></a>→<?php echo $post->title; ?>
 </div>
 <div id="content">
