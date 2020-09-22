@@ -26,7 +26,12 @@ Description: Displays the content of a single library database
   </a>
   </h2>
   <?php endif; ?>
-<div class="permalink"><a href="<?php the_permalink(); ?>">🔗link</a></div>
+<div>
+  <span class="permalink"><a href="<?php the_permalink(); ?>">🔗link</a></span>
+  <?php if (! Library_Databases_Helpers::is_inaccessible(get_post())): ?>
+  | <span class="database-link"><a href="<?php echo Library_Databases_Helpers::get_database_url($post); ?>">↗visit</a></span>
+  <?php endif; ?>
+</div>
 <div class="entry-content">
   <?php echo apply_filters('the_content', $post->post_content); ?>
   <?php $availability_text = Library_Databases_Helpers::get_description_for_post($post); ?>
