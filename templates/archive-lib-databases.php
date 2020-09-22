@@ -11,10 +11,11 @@ get_header(); ?>
 		<h1 class="entry-title"><?php the_title(); ?></h1>
 
 		<?php if ( have_posts() ) {
-		while ( have_posts() ) {
-			the_post();
-			echo Library_Databases_Helpers::display(get_post());
-		}?>
+			while ( have_posts() ) {
+				the_post();
+				echo Library_Databases_Helpers::display(get_post());
+			}
+		} ?>
 
 	</div><!-- #content -->
 </div><!-- #container -->
