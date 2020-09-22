@@ -36,7 +36,7 @@ class Library_Databases_Plugin {
   function add_actions() {
     add_action('init', array($this, 'init'));
     add_action('wp_head', array($this, 'public_css'));
-    add_action( 'pre_get_posts', array($this, 'archive_sort_order'));
+    add_action('pre_get_posts', array($this, 'archive_sort_order'));
   }
 
   function add_filters() {
@@ -143,12 +143,12 @@ class Library_Databases_Plugin {
 
 
   function archive_page_sort_order($query){
-      if(is_post_type_archive( 'lib_databases' )):
-         //Set the order ASC or DESC
-         $query->set( 'order', 'ASC' );
-         //Set the orderby
-         $query->set( 'orderby', 'title' );
-      endif;
-  };
+    if (is_post_type_archive( 'lib_databases' )) {
+      //Set the order ASC or DESC
+      $query->set( 'order', 'ASC' );
+      //Set the orderby
+      $query->set( 'orderby', 'title' );
+    }
+  }
 }
 new Library_Databases_Plugin();
