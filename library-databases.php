@@ -141,7 +141,11 @@ class Library_Databases_Plugin {
     return $template;
   }
 
-
+  /**
+   * Show all databases in alphabetical order on archive page. 
+   *
+   * @wp-hook pre_get_posts
+   */
   function archive_sort_order($query){
     if (! is_admin() && $query->is_main_query() && is_post_type_archive( 'lib_databases' )) {
       //Set the order ASC or DESC
