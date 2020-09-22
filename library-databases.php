@@ -91,13 +91,13 @@ class Library_Databases_Plugin {
     );
 
     $args = array(
-      'has_archive' => 'true',
+      'has_archive' => true,
       'labels' => $labels,
       'public' => true,
       'publicly_queryable' => true,
       'show_ui' => true,
       'query_var' => true,
-      'rewrite' =>  array('slug' => 'databases', with_front => 'false'),
+      'rewrite' =>  array('slug' => 'databases', with_front => false),
       'capability_type' => 'post',
       'hierarchical' => false,
       'menu_icon' => 'dashicons-admin-site',
