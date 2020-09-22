@@ -96,7 +96,7 @@ class Library_Databases_Plugin {
       'publicly_queryable' => true,
       'show_ui' => true,
       'query_var' => true,
-      'rewrite' =>  array('slug' => 'database', with_front => 'false'),
+      'rewrite' =>  array('slug' => 'databases', with_front => 'false'),
       'capability_type' => 'post',
       'hierarchical' => false,
       'menu_icon' => 'dashicons-admin-site',
