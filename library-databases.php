@@ -91,6 +91,7 @@ class Library_Databases_Plugin {
     );
 
     $args = array(
+      'has_archive' => 'true',
       'labels' => $labels,
       'public' => true,
       'publicly_queryable' => true,
