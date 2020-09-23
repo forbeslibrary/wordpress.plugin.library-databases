@@ -4,6 +4,7 @@ Template Name: Content Library Database
 Description: Displays the content of a single library database
 */
 global $more;
+$content_array = get_extended($post->post_content);
 ?>
 <article id="post-<?php the_ID(); ?>" class="lib_databases post hentry">
   <?php if (Library_Databases_Helpers::is_inaccessible(get_post())): ?>
@@ -32,17 +33,15 @@ global $more;
   <?php if (! Library_Databases_Helpers::is_inaccessible(get_post())): ?>
   | <span class="database-link"><a href="<?php echo Library_Databases_Helpers::get_database_url($post); ?>">↗visit</a></span>
   <?php endif; ?>
+  <?php if ($content_array['extended']): ?>
+  | <span class="learn-more-link"><a href="<?php the_permalink(); ?>">❓learn more</a></span>
+  <?php endif; ?>
 </div>
 <div class="entry-content">
   <?php if ($more):?>
     <?php echo apply_filters('the_content', $post->post_content); ?>
   <?php else: ?>
-    <?php
-    $content_array = get_extended($post->post_content);
-    echo apply_filters('the_content', $content_array ['main']);
-    if ($content_array['extended']): ?>
-      <p><a class="more-link" href="<?php the_permalink(); ?>">learn more</a></p>
-    <?php endif; ?>
+    <?php echo apply_filters('the_content', $content_array ['main']); ?>
   <?php endif; ?>
   <?php $availability_text = Library_Databases_Helpers::get_description_for_post($post); ?>
   <?php if ($availability_text): ?>
