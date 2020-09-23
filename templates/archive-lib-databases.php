@@ -9,8 +9,9 @@ get_header(); ?>
 
 		<?php the_post(); ?>
 		<h1 class="entry-title"><?php post_type_archive_title(); ?></h1>
-
-		<?php if ( have_posts() ) {
+		<?php global $more;
+		$more = 0;
+		if ( have_posts() ) {
 			while ( have_posts() ) {
 				the_post();
 				echo Library_Databases_Helpers::display(get_post());
