@@ -10,18 +10,16 @@ class Library_Databases_Update_Tool {
     if (!get_option('lib_databases_version')) {
       $this->update_to_1_0_0();
     }
-    if (version_compare(get_option('lib_databases_version'), "1.0.5", "<")) {
-      $this->update_to_1_0_5();
+    if (version_compare(get_option('lib_databases_version'), "1.1.0", "<")) {
+      $this->update_to_1_1_0();
     }
   }
 
   /**
-   * Migrate to v1.0.4
-   *
-   * Bug fix update.
+   * Migrate to v1.1.0
    */
-  function update_to_1_0_5() {
-    update_option( 'lib_databases_version', '1.0.5' );
+  function update_to_1_1_0() {
+    update_option( 'lib_databases_version', '1.1.0' );
   }
 
   /**
