@@ -41,7 +41,7 @@ global $more;
     $content_array = get_extended($post->post_content);
     echo apply_filters('the_content', $content_array ['main']);
     if ($content_array['extended']): ?>
-      <p><a class="more-link" href="<?php the_permalink(); ?>">More…</a></p>
+      <p><a class="more-link" href="<?php the_permalink(); ?>">learn more</a></p>
     <?php endif; ?>
   <?php endif; ?>
   <?php $availability_text = Library_Databases_Helpers::get_description_for_post($post); ?>
