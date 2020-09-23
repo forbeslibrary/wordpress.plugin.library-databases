@@ -3,6 +3,7 @@
 Template Name: Content Library Database
 Description: Displays the content of a single library database
 */
+global $more;
 ?>
 <article id="post-<?php the_ID(); ?>" class="lib_databases post hentry">
   <?php if (Library_Databases_Helpers::is_inaccessible(get_post())): ?>
