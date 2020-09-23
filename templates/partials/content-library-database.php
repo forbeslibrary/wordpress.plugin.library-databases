@@ -38,6 +38,7 @@ global $more;
     <?php echo apply_filters('the_content', $post->post_content); ?>
   <?php else: ?>
     <?php echo apply_filters('the_content', get_extended($post->post_content)['main']); ?>
+    <a class="more-link" href="<?php the_permalink(); ?>">More…</a>
   <?php endif; ?>
   <?php $availability_text = Library_Databases_Helpers::get_description_for_post($post); ?>
   <?php if ($availability_text): ?>
