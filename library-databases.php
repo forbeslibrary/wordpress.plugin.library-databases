@@ -128,7 +128,7 @@ class Library_Databases_Plugin {
       }
       .lib_databases header .title_area {
         display: inline-block;
-        vertical-aligh: middle;
+        vertical-align: middle;
       }
       .lib_database_feature_icon { vertical-align: middle; }
       .lib_databases .permalink,
