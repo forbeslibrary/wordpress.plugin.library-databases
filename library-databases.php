@@ -134,6 +134,9 @@ class Library_Databases_Plugin {
         border-left: solid black 2px;
         padding-left: 0.5em;
       }
+      .lib_databases .quick_links {
+        
+      }
     </style>
     <?php
   }
