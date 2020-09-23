@@ -29,12 +29,12 @@ $content_array = get_extended($post->post_content);
   </h2>
   <?php endif; ?>
 <div>
-  <span class="permalink"><a href="<?php the_permalink(); ?>">🔗link</a></span>
+  <span class="permalink"><a href="<?php the_permalink(); ?>">🔗 link</a></span>
   <?php if (! Library_Databases_Helpers::is_inaccessible(get_post())): ?>
-  | <span class="database-link"><a href="<?php echo Library_Databases_Helpers::get_database_url($post); ?>">↗visit</a></span>
+  <span class="database-link"><a href="<?php echo Library_Databases_Helpers::get_database_url($post); ?>">↗ visit</a></span>
   <?php endif; ?>
   <?php if ($content_array['extended'] && !$more): ?>
-  | <span class="learn-more-link"><a href="<?php the_permalink(); ?>">❓learn more</a></span>
+  <span class="learn-more-link"><a href="<?php the_permalink(); ?>">❓ learn more</a></span>
   <?php endif; ?>
 </div>
 <div class="entry-content">

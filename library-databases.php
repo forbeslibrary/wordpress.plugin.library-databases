@@ -124,6 +124,16 @@ class Library_Databases_Plugin {
       .lib_databases_availability_text a { font-weight:bold; }
       .lib_databases_category_image { vertical-align: middle; }
       .lib_database_feature_icon { vertical-align: middle; }
+      .lib_databases .permalink,
+      .lib_databases .database-link,
+      .lib_databases .learn-more-link {
+        margin-right: 1em;
+      }
+      .lib_databases .database-link,
+      .lib_databases .learn-more-link {
+        border-left: solid black;
+        padding-left: 1em;
+      }
     </style>
     <?php
   }
