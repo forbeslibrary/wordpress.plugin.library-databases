@@ -118,12 +118,12 @@ class Library_Databases_Plugin {
   function public_css() {
     ?>
     <style>
-      #content .lib_databases_database_unavailable { color:#888; }
-      #content .lib_databases_database_unavailable span { font-size:small; }
-      #content .lib_databases_availability_text { font-style:italic; color:#555; }
-      #content .lib_databases_availability_text a { font-weight:bold; }
-      #content .lib_databases_category_image { vertical-align: middle; }
-      #content .lib_database_feature_icon { vertical-align: middle; }
+      .lib_databases_database_unavailable { color:#888; }
+      .lib_databases_database_unavailable span { font-size:small; }
+      .lib_databases_availability_text { font-style:italic; color:#555; }
+      .lib_databases_availability_text a { font-weight:bold; }
+      .lib_databases_category_image { vertical-align: middle; }
+      .lib_database_feature_icon { vertical-align: middle; }
     </style>
     <?php
   }
