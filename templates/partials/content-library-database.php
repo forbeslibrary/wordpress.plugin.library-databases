@@ -38,7 +38,7 @@ global $more;
     <?php echo apply_filters('the_content', $post->post_content); ?>
   <?php else: ?>
     <?php echo apply_filters('the_content', get_extended($post->post_content)['main']); ?>
-  <php endif; ?>
+  <?php endif; ?>
   <?php $availability_text = Library_Databases_Helpers::get_description_for_post($post); ?>
   <?php if ($availability_text): ?>
     <p class="lib_databases_availability_text">
