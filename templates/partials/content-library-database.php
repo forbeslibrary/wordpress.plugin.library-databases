@@ -9,6 +9,7 @@ $content_array = get_extended($post->post_content);
 <article id="post-<?php the_ID(); ?>" class="lib_databases post hentry">
 <header>
   <?php echo Library_Databases_Helpers::get_availability_icon($post); ?>
+  <div class="title_area">
   <?php if (Library_Databases_Helpers::is_inaccessible(get_post())): ?>
   <h2 class="entry-title lib_databases_database_unavailable">
     <?php the_title(); ?>
@@ -35,6 +36,7 @@ $content_array = get_extended($post->post_content);
     <?php if ($content_array['extended'] && !$more): ?>
     <span class="learn-more-link"><a href="<?php the_permalink(); ?>">❓ learn more</a></span>
     <?php endif; ?>
+  </div>
   </div>
   <?php endif; ?>
 </header>
