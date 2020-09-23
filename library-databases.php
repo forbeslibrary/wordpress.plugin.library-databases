@@ -126,10 +126,12 @@ class Library_Databases_Plugin {
         vertical-align: middle;
         display: inline-block;
       }
-      .lib_databases header .title_area {
+      .lib_databases .title_area {
         display: inline-block;
         vertical-align: middle;
+        margin: 0 1em;
       }
+      .lib_databases .title_area h2 { margin: 0; }
       .lib_database_feature_icon { vertical-align: middle; }
       .lib_databases .permalink,
       .lib_databases .database-link,
