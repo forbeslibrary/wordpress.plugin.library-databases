@@ -5,7 +5,7 @@
  * Author: Benjamin Kalish
  * Author URI: https://github.com/bkalish
  * Description: Provides easy access to and organization of a library databases and other electronic resources on the web.
- * Version: 1.0.5
+ * Version: 1.1.0
  * License: GNU General Public License v2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -36,10 +36,12 @@ class Library_Databases_Plugin {
   function add_actions() {
     add_action('init', array($this, 'init'));
     add_action('wp_head', array($this, 'public_css'));
+    add_action('pre_get_posts', array($this, 'archive_sort_order'));
   }
 
   function add_filters() {
     add_filter('single_template', array($this, 'single_template'));
+    add_filter('archive_template', array($this, 'archive_template'));
   }
 
   function add_shortcodes() {
@@ -91,12 +93,13 @@ class Library_Databases_Plugin {
     );
 
     $args = array(
+      'has_archive' => true,
       'labels' => $labels,
       'public' => true,
       'publicly_queryable' => true,
       'show_ui' => true,
       'query_var' => true,
-      'rewrite' =>  true,
+      'rewrite' =>  array('slug' => 'databases', 'with_front' => false),
       'capability_type' => 'post',
       'hierarchical' => false,
       'menu_icon' => 'dashicons-admin-site',
@@ -115,12 +118,22 @@ class Library_Databases_Plugin {
   function public_css() {
     ?>
     <style>
-      #content .lib_databases_database_unavailable { color:#888; }
-      #content .lib_databases_database_unavailable span { font-size:small; }
-      #content .lib_databases_availability_text { font-style:italic; color:#555; }
-      #content .lib_databases_availability_text a { font-weight:bold; }
-      #content .lib_databases_category_image { vertical-align: middle; }
-      #content .lib_database_feature_icon { vertical-align: middle; }
+      .lib_databases_database_unavailable { color:#888; }
+      .lib_databases_database_unavailable span { font-size:small; }
+      .lib_databases_availability_text { font-style:italic; color:#555; }
+      .lib_databases_availability_text a { font-weight:bold; }
+      .lib_databases_category_image { vertical-align: middle; }
+      .lib_database_feature_icon { vertical-align: middle; }
+      .lib_databases .permalink,
+      .lib_databases .database-link,
+      .lib_databases .learn-more-link {
+        margin-right: 0.5em;
+      }
+      .lib_databases .database-link,
+      .lib_databases .learn-more-link {
+        border-left: solid black 2px;
+        padding-left: 0.5em;
+      }
     </style>
     <?php
   }
@@ -134,9 +147,39 @@ class Library_Databases_Plugin {
     global $post;
 
     if ($post->post_type == 'lib_databases') {
-       $template = dirname( __FILE__ ) . '/templates/single-library-database.php';
+       $template = dirname( __FILE__ ) . '/templates/single-lib-databases.php';
     }
     return $template;
+  }
+
+  /**
+   * Use a special template for showing the lib_database archives.
+   *
+   * @wp-hook archive_template
+   */
+  function archive_template($template){
+    global $post;
+
+    if ($post->post_type == 'lib_databases') {
+       $template = dirname( __FILE__ ) . '/templates/archive-lib-databases.php';
+    }
+    return $template;
+  }
+
+  /**
+   * Show all databases in alphabetical order on archive page.
+   *
+   * @wp-hook pre_get_posts
+   */
+  function archive_sort_order($query){
+    if (! is_admin() && $query->is_main_query() && is_post_type_archive( 'lib_databases' )) {
+      //Set the order ASC or DESC
+      $query->set( 'order', 'ASC' );
+      //Set the orderby
+      $query->set( 'orderby', 'title' );
+      //Show all Databases
+      $query->set( 'nopaging', true );
+    }
   }
 }
 new Library_Databases_Plugin();
