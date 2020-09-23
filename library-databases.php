@@ -127,12 +127,12 @@ class Library_Databases_Plugin {
       .lib_databases .permalink,
       .lib_databases .database-link,
       .lib_databases .learn-more-link {
-        margin-right: 1em;
+        margin-right: 0.5em;
       }
       .lib_databases .database-link,
       .lib_databases .learn-more-link {
-        border-left: solid black;
-        padding-left: 1em;
+        border-left: solid black 2px;
+        padding-left: 0.5em;
       }
     </style>
     <?php
