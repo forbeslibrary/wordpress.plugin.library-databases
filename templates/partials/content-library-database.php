@@ -34,7 +34,7 @@ global $more;
   <?php endif; ?>
 </div>
 <div class="entry-content">
-  <?php if ($more):</php>
+  <?php if ($more):?>
     <?php echo apply_filters('the_content', $post->post_content); ?>
   <?php else: ?>
     <?php echo apply_filters('the_content', get_extended($post->post_content)['main']); ?>
