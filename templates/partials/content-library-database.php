@@ -33,7 +33,7 @@ Description: Displays the content of a single library database
   <?php endif; ?>
 </div>
 <div class="entry-content">
-  <?php echo apply_filters('the_content', $post->post_content); ?>
+  <?php echo the_content(); ?>
   <?php $availability_text = Library_Databases_Helpers::get_description_for_post($post); ?>
   <?php if ($availability_text): ?>
     <p class="lib_databases_availability_text">
