@@ -28,6 +28,7 @@ $content_array = get_extended($post->post_content);
   }?>
   </a>
   </h2>
+  <?php endif; ?>
   <div class="quick_links">
     <span class="permalink"><a href="<?php the_permalink(); ?>">🔗 link</a></span>
     <?php if (! Library_Databases_Helpers::is_inaccessible(get_post())): ?>
@@ -38,7 +39,6 @@ $content_array = get_extended($post->post_content);
     <?php endif; ?>
   </div>
   </div>
-  <?php endif; ?>
 </header>
 <div class="entry-content">
   <?php if ($more):?>
