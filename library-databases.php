@@ -184,13 +184,17 @@ class Library_Databases_Plugin {
    * @wp-hook pre_get_posts
    */
   function archive_sort_order($query){
-    if (! is_admin() && $query->is_main_query() && is_post_type_archive( 'lib_databases' )) {
-      //Set the order ASC or DESC
-      $query->set( 'order', 'ASC' );
-      //Set the orderby
-      $query->set( 'orderby', 'title' );
-      //Show all Databases
-      $query->set( 'nopaging', true );
+    if (! is_admin() && $query->is_main_query()) {
+      if ( is_post_type_archive( 'lib_databases' )
+          || is_tax(lib_databases_categories
+        )) {
+        //Set the order ASC or DESC
+        $query->set( 'order', 'ASC' );
+        //Set the orderby
+        $query->set( 'orderby', 'title' );
+        //Show all Databases
+        $query->set( 'nopaging', true );
+      }
     }
   }
 }
