@@ -41,16 +41,15 @@ $content_array = get_extended($post->post_content);
   </div>
 </header>
 <div class="entry-content">
-  <?php if ($more):?>
-    <?php echo apply_filters('the_content', $post->post_content); ?>
-  <?php else: ?>
-    <?php echo apply_filters('the_content', $content_array ['main']); ?>
-  <?php endif; ?>
+  <?php echo apply_filters('the_content', $content_array ['main']); ?>
   <?php $availability_text = Library_Databases_Helpers::get_description_for_post($post); ?>
   <?php if ($availability_text): ?>
     <p class="lib_databases_availability_text">
       <?php echo $availability_text; ?>
     </p>
+  <?php endif; ?>
+  <?php if (!$more):?>
+    <?php echo apply_filters('the_content', $content_array ['extended']); ?>
   <?php endif; ?>
 </div>
 <?php if (is_user_logged_in()): ?>
