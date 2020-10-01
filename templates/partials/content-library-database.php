@@ -48,7 +48,7 @@ $content_array = get_extended($post->post_content);
       <?php echo $availability_text; ?>
     </p>
   <?php endif; ?>
-  <?php if (!$more):?>
+  <?php if ($more):?>
     <?php echo apply_filters('the_content', $content_array ['extended']); ?>
   <?php endif; ?>
 </div>
