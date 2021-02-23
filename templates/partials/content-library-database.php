@@ -30,7 +30,7 @@ $content_array = get_extended($post->post_content);
   </h2>
   <?php endif; ?>
   <div class="quick_links">
-    <span class="permalink"><a href="<?php the_permalink(); ?>">🔗 link</a></span>
+    <span class="permalink"><a href="<?php the_permalink(); ?>">🔗 permalink</a></span>
     <?php if (! Library_Databases_Helpers::is_inaccessible(get_post())): ?>
     <span class="database-link"><a href="<?php echo Library_Databases_Helpers::get_database_url($post); ?>">↗ visit</a></span>
     <?php endif; ?>
