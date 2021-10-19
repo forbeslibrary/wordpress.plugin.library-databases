@@ -122,7 +122,16 @@ class Library_Databases_Plugin {
       .lib_databases_database_unavailable span { font-size:small; }
       .lib_databases_availability_text { font-style:italic; color:#555; }
       .lib_databases_availability_text a { font-weight:bold; }
-      .lib_databases_category_image { vertical-align: middle; }
+      .lib_databases_category_image {
+        vertical-align: middle;
+        display: inline-block;
+      }
+      .lib_databases .title_area {
+        display: inline-block;
+        vertical-align: middle;
+        margin: 0 1em;
+      }
+      .lib_databases .title_area h2 { margin: 0; }
       .lib_database_feature_icon { vertical-align: middle; }
       .lib_databases .permalink,
       .lib_databases .database-link,
@@ -133,6 +142,9 @@ class Library_Databases_Plugin {
       .lib_databases .learn-more-link {
         border-left: solid black 2px;
         padding-left: 0.5em;
+      }
+      .lib_databases .quick_links {
+
       }
     </style>
     <?php
@@ -172,13 +184,17 @@ class Library_Databases_Plugin {
    * @wp-hook pre_get_posts
    */
   function archive_sort_order($query){
-    if (! is_admin() && $query->is_main_query() && is_post_type_archive( 'lib_databases' )) {
-      //Set the order ASC or DESC
-      $query->set( 'order', 'ASC' );
-      //Set the orderby
-      $query->set( 'orderby', 'title' );
-      //Show all Databases
-      $query->set( 'nopaging', true );
+    if (! is_admin() && $query->is_main_query()) {
+      if ( is_post_type_archive( 'lib_databases' )
+          || is_tax(lib_databases_categories
+        )) {
+        //Set the order ASC or DESC
+        $query->set( 'order', 'ASC' );
+        //Set the orderby
+        $query->set( 'orderby', 'title' );
+        //Show all Databases
+        $query->set( 'nopaging', true );
+      }
     }
   }
 }

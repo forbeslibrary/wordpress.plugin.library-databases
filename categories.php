@@ -33,6 +33,7 @@ class Library_Databases_Categories {
           'popular_items' => NULL
         ),
         'hierarchical' => False,
+        'rewrite' =>  array('slug' => 'databases-access', 'with_front' => false),
         'show_ui' => True,
         'capabilities' => array(
           'manage_terms' => 'manage_options', // by default only admin
