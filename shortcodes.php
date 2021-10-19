@@ -9,7 +9,7 @@ class Library_Databases_Shortcodes {
    *
    * @wp-hook add_shortcode lib_database_list
    */
-  function lib_database_list( $atts, $content = null ) {
+  static function lib_database_list( $atts, $content = null ) {
     if (is_search()) { return ''; }
     $the_query = self::query($atts);
 
@@ -32,7 +32,7 @@ class Library_Databases_Shortcodes {
    *
    * @wp-hook add_shortcode lib_database_select
    */
-  function lib_database_select( $atts, $content = null ) {
+  static function lib_database_select( $atts, $content = null ) {
     extract( shortcode_atts( array(
       'title' => 'Database Quick Access',
       'select_message' => 'Select a Database',
