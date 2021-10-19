@@ -5,7 +5,7 @@
  * Author: Benjamin Kalish
  * Author URI: https://github.com/bkalish
  * Description: Provides easy access to and organization of a library databases and other electronic resources on the web.
- * Version: 1.1.0
+ * Version: 1.1.2
  * License: GNU General Public License v2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -186,7 +186,7 @@ class Library_Databases_Plugin {
   function archive_sort_order($query){
     if (! is_admin() && $query->is_main_query()) {
       if ( is_post_type_archive( 'lib_databases' )
-          || is_tax(lib_databases_categories
+          || is_tax('lib_databases_categories'
         )) {
         //Set the order ASC or DESC
         $query->set( 'order', 'ASC' );

@@ -63,7 +63,8 @@ class Library_Databases_Categories_Admin {
     //Get all the terms for this taxonomy
     $terms = get_terms($tax_name, array('hide_empty' => 0));
 
-    $current = Library_Databases_Helpers::get_term_for_post()->term_id;
+    $current_term = Library_Databases_Helpers::get_term_for_post();
+    $current_id = ($current_term ? $current_term->term_id : false);
     ?>
     <ul id="<?php echo $tax_name; ?>checklist" class="list:<?php echo $tax_name; ?> categorychecklist form-no-clear">
       <?php foreach($terms as $term) :?>
@@ -73,7 +74,7 @@ class Library_Databases_Categories_Admin {
               <input type='radio'
                 id="<?php echo "in-$id"?>"
                 name="<?php echo $name; ?>"
-                <?php echo checked($current, $term->term_id, false); ?>
+                <?php echo checked($current_id, $term->term_id, false); ?>
                 value="<?php echo $term->name; ?>" />
             <?php echo $term->name; ?>
           </label>

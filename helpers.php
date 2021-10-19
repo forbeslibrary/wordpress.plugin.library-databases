@@ -79,7 +79,6 @@ class Library_Databases_Helpers {
     $custom = get_post_custom($post->ID);
     $database_main_url = $custom["database_main_url"][0];
     $database_home_use_url = $custom["database_home_use_url"][0];
-    $database_availability = $custom["database_availability"][0];
     if ($database_home_use_url && !self::user_in_library()) {
        return $database_home_use_url;
     }

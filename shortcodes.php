@@ -9,7 +9,7 @@ class Library_Databases_Shortcodes {
    *
    * @wp-hook add_shortcode lib_database_list
    */
-  function lib_database_list( $atts, $content = null ) {
+  static function lib_database_list( $atts, $content = null ) {
     if (is_search()) { return ''; }
     $the_query = self::query($atts);
 
@@ -32,7 +32,7 @@ class Library_Databases_Shortcodes {
    *
    * @wp-hook add_shortcode lib_database_select
    */
-  function lib_database_select( $atts, $content = null ) {
+  static function lib_database_select( $atts, $content = null ) {
     extract( shortcode_atts( array(
       'title' => 'Database Quick Access',
       'select_message' => 'Select a Database',
@@ -69,21 +69,33 @@ class Library_Databases_Shortcodes {
     ob_start();?>
     <div id="<?php echo "lib_databases_nav_$count"; ?>"></div>
     <script>
+    var menu_data = JSON.parse('<?php echo json_encode($menu_data); ?>');
     var nav_id = "lib_databases_nav_<?php echo $count; ?>";
     var select_id = "lib_databases_select_<?php echo $count; ?>";
-    jQuery('#' + nav_id).append('<label for="' + select_id + '"><?php echo $title; ?></label>');
-    jQuery('#' + nav_id).append(' ');
-    jQuery('#' + nav_id).append('<select id="' + select_id + '"><option><?php echo $select_message; ?></option></select>');
-    options = jQuery.map(JSON.parse('<?php echo json_encode($menu_data); ?>'), function( value, index ) {
-       option = jQuery('<option></option>');
-       option.html(value.title);
-       option.attr('value',value.url);
-       if (value.disabled) { option.attr('disabled','disabled'); }
-       return option;
+    var title = "<?php echo "$title "; ?>";
+    var select_message = "<?php echo $select_message; ?>";
+
+    var container = document.getElementById(nav_id);
+    var select_menu = document.createElement('select');
+    var select_prompt = document.createElement('option');
+
+    container.appendChild(document.createTextNode(title));
+    select_menu.id = select_id;
+    select_prompt.innerHTML = select_message;
+    select_menu.appendChild(select_prompt);
+    container.appendChild(select_menu);
+
+    menu_data.forEach(function (value, index) {
+      let option = document.createElement('option');
+      option.innerHTML = value.title;
+      option.setAttribute('value',value.url);
+      if (value.disabled) {
+        option.setAttribute('disabled','disabled');
+      }
+      select_menu.appendChild(option);
     });
-    jQuery('#' + select_id).append(options);
-    jQuery('#' + select_id).change(function() {
-      window.location = jQuery('#' + select_id + ' option:selected').val();
+    select_menu.addEventListener('change', function (event) {
+      window.location = event.target.value;
     });
     </script>
     <?php
