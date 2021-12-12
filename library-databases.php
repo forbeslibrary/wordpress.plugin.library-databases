@@ -5,197 +5,180 @@
  * Author: Benjamin Kalish
  * Author URI: https://github.com/bkalish
  * Description: Provides easy access to and organization of a library databases and other electronic resources on the web.
- * Version: 1.1.2
+ * Version: 2.0.0
  * License: GNU General Public License v2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
+ *
+ * @package LibraryDatabases
  */
 
-class Library_Databases_Plugin {
-  function __construct() {
-    $this->load_dependencies();
-    $this->add_actions();
-    $this->add_filters();
-    $this->add_shortcodes();
-    register_activation_hook(__FILE__, array($this, 'flush_rewrites'));
-    register_activation_hook(__FILE__, array($this, 'update'));
-  }
+namespace ForbesLibrary\WordPress\LibraryDatabases;
 
-  function load_dependencies() {
-    require_once( dirname( __FILE__ ) . '/categories.php' );
-    new Library_Databases_Categories();
-    require_once( dirname( __FILE__ ) . '/research-areas.php' );
-    new Library_Databases_Research_Areas();
-    require_once( dirname( __FILE__ ) . '/helpers.php' );
-    require_once( dirname( __FILE__ ) . '/shortcodes.php' );
-    if ( is_admin() ) {
-      require_once(dirname( __FILE__ ) . '/admin.php');
-      $this->admin = new Library_Databases_Plugin_Admin();
-    }
-  }
+load_dependencies();
+add_actions();
+add_filters();
+add_shortcodes();
 
-  function add_actions() {
-    add_action('init', array($this, 'init'));
-    add_action('wp_head', array($this, 'public_css'));
-    add_action('pre_get_posts', array($this, 'archive_sort_order'));
-  }
+/**
+ * Include required files.
+ */
+function load_dependencies() {
+	$php_dir = dirname( __FILE__ ) . '/php';
 
-  function add_filters() {
-    add_filter('single_template', array($this, 'single_template'));
-    add_filter('archive_template', array($this, 'archive_template'));
-  }
+	require_once $php_dir . '/class-access-category.php';
+	require_once $php_dir . '/class-research-area.php';
+	require_once $php_dir . '/helpers.php';
+	require_once $php_dir . '/shortcodes.php';
 
-  function add_shortcodes() {
-    add_shortcode( 'lib_database_list', array('Library_Databases_Shortcodes', 'lib_database_list'));
-    add_shortcode( 'lib_database_select', array('Library_Databases_Shortcodes', 'lib_database_select'));
-  }
+	Access_Category::register_wp_hooks();
+	Research_Area::register_wp_hooks();
 
-  /**
-   * Flush rewrite rules on plugin activation
-   *
-   * This is registered with register_activation_hook for this file
-   */
-  function flush_rewrites() {
-    $this->init();
-    $library_databases_categories = new Library_Databases_Categories();
-    $library_databases_categories->init();
-    flush_rewrite_rules();
-  }
-
-  /**
-   * Update the plugin
-   *
-   * This is registered with register_activation_hook for this file
-   */
-  function update() {
-    require_once( dirname( __FILE__ ) . '/update.php' );
-    $update_tool = new Library_Databases_Update_Tool();
-    $update_tool->update();
-  }
-
-  /**
-   * Initializes the plugin.
-   *
-   * @wp-hook init
-   */
-  function init() {
-    $labels = array(
-      'name' => _x('Databases', 'post type general name'),
-      'singular_name' => _x('Database', 'post type singular name'),
-      'add_new' => _x('Add New', 'portfolio item'),
-      'add_new_item' => __('Add New Database'),
-      'edit_item' => __('Edit Database'),
-      'new_item' => __('New Database'),
-      'view_item' => __('View Database Page'),
-      'search_items' => __('Search Databases'),
-      'not_found' =>  __('Nothing found'),
-      'not_found_in_trash' => __('Nothing found in Trash'),
-      'parent_item_colon' => ''
-    );
-
-    $args = array(
-      'has_archive' => true,
-      'labels' => $labels,
-      'public' => true,
-      'publicly_queryable' => true,
-      'show_ui' => true,
-      'query_var' => true,
-      'rewrite' =>  array('slug' => 'databases', 'with_front' => false),
-      'capability_type' => 'post',
-      'hierarchical' => false,
-      'menu_icon' => 'dashicons-admin-site',
-      'menu_position' => 5, // admin menu appears after Posts but before Media
-      'supports' => array('title','editor','thumbnail')
-    );
-
-    register_post_type( 'lib_databases' , $args );
-  }
-
-  /**
-   * Adds custom CSS to public pages.
-   *
-   * @wp-hook wp_head
-   */
-  function public_css() {
-    ?>
-    <style>
-      .lib_databases_database_unavailable { color:#888; }
-      .lib_databases_database_unavailable span { font-size:small; }
-      .lib_databases_availability_text { font-style:italic; color:#555; }
-      .lib_databases_availability_text a { font-weight:bold; }
-      .lib_databases_category_image {
-        vertical-align: middle;
-        display: inline-block;
-      }
-      .lib_databases .title_area {
-        display: inline-block;
-        vertical-align: middle;
-        margin: 0 1em;
-      }
-      .lib_databases .title_area h2 { margin: 0; }
-      .lib_database_feature_icon { vertical-align: middle; }
-      .lib_databases .permalink,
-      .lib_databases .database-link,
-      .lib_databases .learn-more-link {
-        margin-right: 0.5em;
-      }
-      .lib_databases .database-link,
-      .lib_databases .learn-more-link {
-        border-left: solid black 2px;
-        padding-left: 0.5em;
-      }
-      .lib_databases .quick_links {
-
-      }
-    </style>
-    <?php
-  }
-
-  /**
-   * Use a special template for showing a single lib_database on a page.
-   *
-   * @wp-hook single_template
-   */
-  function single_template($template){
-    global $post;
-
-    if ($post->post_type == 'lib_databases') {
-       $template = dirname( __FILE__ ) . '/templates/single-lib-databases.php';
-    }
-    return $template;
-  }
-
-  /**
-   * Use a special template for showing the lib_database archives.
-   *
-   * @wp-hook archive_template
-   */
-  function archive_template($template){
-    global $post;
-
-    if ($post->post_type == 'lib_databases') {
-       $template = dirname( __FILE__ ) . '/templates/archive-lib-databases.php';
-    }
-    return $template;
-  }
-
-  /**
-   * Show all databases in alphabetical order on archive page.
-   *
-   * @wp-hook pre_get_posts
-   */
-  function archive_sort_order($query){
-    if (! is_admin() && $query->is_main_query()) {
-      if ( is_post_type_archive( 'lib_databases' )
-          || is_tax('lib_databases_categories'
-        )) {
-        //Set the order ASC or DESC
-        $query->set( 'order', 'ASC' );
-        //Set the orderby
-        $query->set( 'orderby', 'title' );
-        //Show all Databases
-        $query->set( 'nopaging', true );
-      }
-    }
-  }
+	if ( is_admin() ) {
+		require_once $php_dir . '/admin.php';
+		require_once $php_dir . '/categories-admin.php';
+	}
 }
-new Library_Databases_Plugin();
+
+/**
+ * Hook into WordPress to add our actions.
+ */
+function add_actions() {
+	add_action( 'init', __NAMESPACE__ . '\init' );
+	add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_scripts' );
+	add_action( 'pre_get_posts', __NAMESPACE__ . '\archive_sort_order' );
+}
+
+/**
+ * Hook into WordPress to add our filters.
+ */
+function add_filters() {
+	add_filter( 'single_template', __NAMESPACE__ . '\single_template' );
+	add_filter( 'archive_template', __NAMESPACE__ . '\archive_template' );
+}
+
+/**
+ * Hook into WordPress to add our shortcodes.
+ */
+function add_shortcodes() {
+	add_shortcode( 'lib_database_list', __NAMESPACE__ . '\Shortcodes\lib_database_list' );
+	add_shortcode( 'lib_database_select', __NAMESPACE__ . '\Shortcodes\lib_database_select' );
+}
+
+/**
+ * Initializes the plugin.
+ *
+ * @wp-hook init
+ */
+function init() {
+	$labels = array(
+		'name'               => __( 'Databases' ),
+		'singular_name'      => __( 'Database' ),
+		'add_new'            => _x( 'Add New', 'database' ),
+		'add_new_item'       => __( 'Add New Database' ),
+		'edit_item'          => __( 'Edit Database' ),
+		'new_item'           => __( 'New Database' ),
+		'view_item'          => __( 'View Database Page' ),
+		'search_items'       => __( 'Search Databases' ),
+		'not_found'          => __( 'Nothing found' ),
+		'not_found_in_trash' => __( 'Nothing found in Trash' ),
+		'parent_item_colon'  => '',
+	);
+
+	$args = array(
+		'has_archive'        => true,
+		'labels'             => $labels,
+		'public'             => true,
+		'publicly_queryable' => true,
+		'show_ui'            => true,
+		'query_var'          => true,
+		'rewrite'            => array(
+			'slug'       => 'databases',
+			'with_front' => false,
+		),
+		'capability_type'    => 'post',
+		'hierarchical'       => false,
+		'menu_icon'          => 'dashicons-admin-site',
+		'menu_position'      => 5, // After Posts but before Media.
+		'supports'           => array( 'title', 'editor', 'thumbnail' ),
+	);
+
+	register_post_type( 'lib_databases', $args );
+}
+
+/**
+ * Enqueue Styles and Scripts
+ */
+function enqueue_scripts() {
+	wp_enqueue_style(
+		'librarydatabases-style',
+		plugin_dir_url( __FILE__ ) . 'css/library-databases.css',
+		array(), // No dependencies.
+		get_plugin_version(),
+	);
+
+	wp_register_script(
+		'library-databases-select-menu',
+		plugin_dir_url( __FILE__ ) . 'js/library-databases-select-menu.js',
+		array(),
+		get_plugin_version(),
+		true
+	);
+}
+
+/**
+ * Use a special template for showing a single lib_database on a page.
+ *
+ * @wp-hook single_template
+ * @param string $template Path to the template.
+ */
+function single_template( $template ) {
+	global $post;
+
+	if ( 'lib_databases' === $post->post_type ) {
+		$template = dirname( __FILE__ ) . '/php/templates/single-lib-databases.php';
+	}
+	return $template;
+}
+
+/**
+ * Use a special template for showing the lib_database archives.
+ *
+ * @wp-hook archive_template
+ * @param string $template Path to the template.
+ */
+function archive_template( $template ) {
+	global $post;
+
+	if ( 'lib_databases' === $post->post_type ) {
+		$template = dirname( __FILE__ ) . '/php/templates/archive-lib-databases.php';
+	}
+	return $template;
+}
+
+/**
+ * Show all databases in alphabetical order on archive page.
+ *
+ * @wp-hook pre_get_posts
+ * @param WP_Query $query The WP_Query instance (passed by reference).
+ */
+function archive_sort_order( $query ) {
+	if ( ! is_admin() && $query->is_main_query() ) {
+		if ( is_post_type_archive( 'lib_databases' )
+				|| is_tax( 'lib_databases_categories' )
+		) {
+			$query->set( 'order', 'ASC' );
+			$query->set( 'orderby', 'title' );
+			$query->set( 'nopaging', true );
+		}
+	}
+}
+
+/**
+ * Gets the plugin version.
+ *
+ * @return string The version string for this plugin.
+ */
+function get_plugin_version() : string {
+	$plugin_data = get_file_data( __FILE__, array( 'Version' => 'Version' ) );
+	return $plugin_data['Version'];
+}

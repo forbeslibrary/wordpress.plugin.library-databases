@@ -1,0 +1,5 @@
+- Create and use methods for saving and retrieving term meta
+- Make sure nonces work for creation and edit
+- Determine if postfix is actually used and eliminate if not
+- Figure out why databases sometimes styled strangely (unexpected width and alignment)
+- make sure all function names are descriptive

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<ruleset name="library-databases">
+	<description>
+		Modifications to the WordPress Coding Standards for library-databases. See
+		https://github.com/WordPress/WordPress-Coding-Standards to learn more.
+	</description>
+	<rule ref="WordPress"/>
+</ruleset>

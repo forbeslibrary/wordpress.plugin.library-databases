@@ -1,17 +1,11 @@
-Wordpress Plugin: Library Databases
-===========
+# WordPress Plugin: Library Databases
+This is a WordPress plugin for a library wishing to provide easy access to and organization of library databases and other electronic resources on the web.
 
-This is a Wordpress plugin for a library wishing to provide easy access to and organization of library databases and other electronic resources on the web.
-
-Usage
------
-
+## Usage
 The plugin creates a custom post type called Library Databases. Each database has a *title*, *description*, an indication of its *availability* (available only in the library vs. availably freely on the web or with a library card) and a *primary url*. In addition, a database may have a *home use url* if the urls for using it in outside of the library differ.
 
 ### Upgrading
-It is best to deactivate the plugin before upgrading and reactivate it after upgrading. If you are upgrading from a version older than 1.0.0 you **must** reactivate the plugin since it's name has changed (from Forbes Databases to Library Databases). When you reactivate the plugin it will automatically rename your shortcodes, taxonomies, and custom post types as necessary.
-
-Note that shortcode attributes are not automatically updated. In particular, early versions of the plugin used the `exclude_free` argument which is not supported as of version 1.0.0. In versions 1.0.1 and later you may use the `exclude_category` shortcode argument to exclude a category.
+As of v2.0.0 this the automatic migration from versions before v1.0.0 has been discontinued. In the unlikely event that you are upgrading from a version older than v2.0.0 be sure to upgrade to one of the 1.x.x versions before upgrading to v2.0.0.
 
 ### Settings
 Users with administrator access can set the IP Addresses to be considered 'in library' on the settings page found under `Settings > Library Databases`.

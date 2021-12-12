@@ -1,0 +1,47 @@
+.lib_databases-database-unavailable {
+  color: #888;
+}
+
+.lib_databases-database-unavailable .parenthetical {
+  font-size: small;
+}
+
+.lib_databases-availability-text {
+  font-style: italic;
+  color: #555;
+}
+
+.lib_databases-availability-text a {
+  font-weight: bold;
+}
+
+.lib_databases_category_image {
+  vertical-align: middle;
+  display: inline-block;
+}
+
+.lib_databases .title_area {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 1em;
+}
+
+.lib_databases .title_area h2 {
+  margin: 0;
+}
+
+.lib_database_feature_icon {
+  vertical-align: middle;
+}
+
+.lib_databases .permalink,
+.lib_databases .database-link,
+.lib_databases .learn-more-link {
+  margin-right: 0.5em;
+}
+
+.lib_databases .database-link,
+.lib_databases .learn-more-link {
+  border-left: solid black 2px;
+  padding-left: 0.5em;
+}
