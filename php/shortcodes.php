@@ -7,7 +7,10 @@
 
 namespace ForbesLibrary\WordPress\LibraryDatabases\Shortcodes;
 
+/** Make sure the Unique_ID class definition has been loaded. */
 require_once 'class-unique-id.php';
+
+/** Make sure the Database class definition has been loaded. */
 require_once 'class-database.php';
 
 use ForbesLibrary\WordPress\LibraryDatabases\Unique_ID;
@@ -28,7 +31,7 @@ use WP_Query;
  *                     shortcode, or an empty string if no attributes are given.
  * @param string       $content The content enclosed by the shortcode.
  */
-function lib_database_list( $atts, $content = null ) {
+function lib_database_list( $atts, ?string $content = null ) {
 	if ( is_search() ) {
 		// Do not expand shortcode on search results page.
 		return '';
@@ -80,7 +83,7 @@ function lib_database_list( $atts, $content = null ) {
  *                     shortcode, or an empty string if no attributes are given.
  * @param string       $content The content enclosed by the shortcode.
  */
-function lib_database_select( $atts, $content = null ) {
+function lib_database_select( $atts, ?string $content = null ) {
 	if ( is_search() ) {
 		// Do not expand shortcode on search results page.
 		return '';
@@ -129,7 +132,7 @@ function lib_database_select( $atts, $content = null ) {
  * @param string $exclude_category The slug of an access_category to exlude. Use
  * null to not exclude any access_categories.
  */
-function make_query( $research_area = null, $exclude_category = null ) {
+function make_query( ?string $research_area = null, ?string $exclude_category = null ) {
 	$query_args = array(
 		'post_type'      => 'lib_databases',
 		'orderby'        => 'title',
@@ -170,12 +173,12 @@ function make_query( $research_area = null, $exclude_category = null ) {
  * library-databases-select-menu script to create a selet menu for launching
  * databases.
  *
- * @param WP_Query $query A WP_Query object for the databases to include in the
+ * @param \WP_Query $query A WP_Query object for the databases to include in the
  * select menu.
  * @return array An array of associative arrays. The inner arrays have keys
  * title, url, and disabled.
  */
-function prepare_data_for_select_menu( $query ) : array {
+function prepare_data_for_select_menu( \WP_Query $query ) : array {
 	$menu_data = array();
 
 	if ( $query->have_posts() ) {

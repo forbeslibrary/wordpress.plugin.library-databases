@@ -128,6 +128,22 @@ function admin_css() {
 			width: 8em;
 		}
 
+		.column-lib_databases_categories-image {
+			width: 40px; /* the image itself is 32px */
+		}
+
+		.column-lib_databases_categories-library-use-only {
+			width: 4em;
+		}
+
+		.taxonomy-lib_databases_categories .wp-list-table {
+			table-layout: auto;
+		}
+
+		.taxonomy-lib_databases_categories .column-slug {
+			width: auto;
+		}
+
 		/* this column created by User Access Manager plugin */
 		.column-uam_access {
 			width: 8em;
@@ -190,9 +206,13 @@ function save_details() {
 		return;
 	}
 
+	// Unslashing and sanitizing are not necessary for wp_verify_nonce().
+	// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+	// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 	if ( ! wp_verify_nonce( $_POST['library-databases-urls-metabox-nonce'], 'edit-library-databases-urls' ) ) {
 		return;
 	}
+	// phpcs:enable
 
 	if ( isset( $_POST['database_main_url'] ) ) {
 		$url = esc_url_raw( wp_unslash( $_POST['database_main_url'] ) );
@@ -227,7 +247,7 @@ function add_meta_boxes() {
  *
  * @param string $column The name of the column to display.
  */
-function manage_custom_columns( $column ) {
+function manage_custom_columns( string $column ) {
 	global $post;
 
 	$research_areas = wp_get_post_terms(
@@ -254,7 +274,7 @@ function manage_custom_columns( $column ) {
  * @param string[] $columns An associative array of column headings.
  * @return string[] An associative array of column headings.
  */
-function manage_columns( $columns ) {
+function manage_columns( array $columns ) {
 	$columns = array_merge(
 		$columns,
 		array(
@@ -268,7 +288,7 @@ function manage_columns( $columns ) {
 }
 
 /**
- * Returns the html for the database urls box on the lib_databases edit page.
+ * Outputs the html for the database urls box on the lib_databases edit page.
  */
 function editbox_database_urls() {
 	global $post;
@@ -299,7 +319,7 @@ function editbox_database_urls() {
  *
  * @param string $hook_suffix The current admin page.
  */
-function admin_enqueue_scripts( $hook_suffix ) {
+function admin_enqueue_scripts( string $hook_suffix ) {
 	wp_register_script(
 		'library-databases-admin-js',
 		plugin_dir_url( __FILE__ ) . '../js/library-databases-admin.js',

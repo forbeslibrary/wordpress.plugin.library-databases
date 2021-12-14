@@ -8,6 +8,8 @@
 
 namespace ForbesLibrary\WordPress\LibraryDatabases;
 
+use function ForbesLibrary\WordPress\LibraryDatabases\Helpers\get_tax_term_meta;
+
 /**
  * A helpful wrapper class around the lib_databases_categories custom taxonomy.
  */
@@ -116,11 +118,11 @@ class Access_Category {
 	 * Returns an <img> tag for the image for this Access_Category.
 	 */
 	public function get_image() {
-		$term_meta = get_option( "taxonomy_{$this->term_id}" );
-		$term      = get_term( $this->term_id );
-		if ( isset( $term_meta['image'] ) ) {
+		$term_image_id = intval( get_tax_term_meta( $this->term_id, 'image' ) );
+		$term          = get_term( $this->term_id );
+		if ( $term_image_id ) {
 			return wp_get_attachment_image(
-				$term_meta['image'],
+				$term_image_id,
 				'full',
 				'true',
 				array(
@@ -144,9 +146,9 @@ class Access_Category {
 	 * Returns the title postfix for select menus for this Access_Category
 	 */
 	public function get_postfix() {
-		$term_meta = get_option( "taxonomy_{$this->term_id}" );
-		if ( isset( $term_meta['postfix'] ) ) {
-			return $term_meta['postfix'];
+		$postfix = get_tax_term_meta( $this->term_id, 'postfix' );
+		if ( $postfix ) {
+			return $postfix;
 		}
 		return '';
 	}
@@ -166,26 +168,17 @@ class Access_Category {
 	/**
 	 * Retrieves metadata for this Access_Category.
 	 *
-	 * This uses get_option() for historical reasons, but should probably be
-	 * using get_term_meta().
-	 *
-	 * @param string? $field The field to be retrieved. If no field is specified
+	 * @param ?string $field The field to be retrieved. If no field is specified
 	 * the full metadata array will be returned.
 	 *
 	 * @return mixed The value of the requested field or n array of metadata field
 	 * names and values if no field was specified.
 	 */
-	public function get_metadata( $field = null ) {
-		$metadata = get_option( "taxonomy_{$this->term_id}" );
-
-		if ( ! $field ) {
-			return $metadata;
+	public function get_metadata( ?string $field = null ) {
+		if ( $field ) {
+			return get_tax_term_meta( $this->term_id, $field );
 		}
 
-		if ( isset( $metadata[ $field ] ) ) {
-			return $metadata[ $field ];
-		}
-
-		return null;
+		return get_tax_term_meta( $this->term_id );
 	}
 }

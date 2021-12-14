@@ -130,8 +130,9 @@ function enqueue_scripts() {
  *
  * @wp-hook single_template
  * @param string $template Path to the template.
+ * @return string Path to the template.
  */
-function single_template( $template ) {
+function single_template( string $template ) {
 	global $post;
 
 	if ( 'lib_databases' === $post->post_type ) {
@@ -145,8 +146,9 @@ function single_template( $template ) {
  *
  * @wp-hook archive_template
  * @param string $template Path to the template.
+ * @return string Path to the template.
  */
-function archive_template( $template ) {
+function archive_template( string $template ) {
 	global $post;
 
 	if ( 'lib_databases' === $post->post_type ) {
@@ -159,9 +161,9 @@ function archive_template( $template ) {
  * Show all databases in alphabetical order on archive page.
  *
  * @wp-hook pre_get_posts
- * @param WP_Query $query The WP_Query instance (passed by reference).
+ * @param \WP_Query $query The WP_Query instance (passed by reference).
  */
-function archive_sort_order( $query ) {
+function archive_sort_order( \WP_Query $query ) {
 	if ( ! is_admin() && $query->is_main_query() ) {
 		if ( is_post_type_archive( 'lib_databases' )
 				|| is_tax( 'lib_databases_categories' )

@@ -11,6 +11,8 @@ namespace ForbesLibrary\WordPress\LibraryDatabases\CategoriesAdmin;
 
 use ForbesLibrary\WordPress\LibraryDatabases\Access_Category;
 use ForbesLibrary\WordPress\LibraryDatabases\Database;
+use function ForbesLibrary\WordPress\LibraryDatabases\Helpers\get_tax_term_meta;
+use function ForbesLibrary\WordPress\LibraryDatabases\Helpers\update_tax_term_meta;
 
 register_wp_hooks();
 
@@ -33,7 +35,7 @@ function register_wp_hooks() {
 		add_action( $action, __NAMESPACE__ . $method_name );
 	}
 
-	add_filter( "manage_edit-{$tax_name}_columns", __NAMESPACE__ . '\columns' );
+	add_filter( "manage_edit-{$tax_name}_columns", __NAMESPACE__ . '\manage_edit_columns' );
 
 	add_filter(
 		"manage_{$tax_name}_custom_column",
@@ -59,7 +61,7 @@ function add_meta_boxes() {
 }
 
 /**
- * Returns the html for the database availability box on the lib_databases
+ * Outputs the html for the database availability box on the lib_databases
  * edit page.
  */
 function output_database_availability_metabox() {
@@ -97,33 +99,41 @@ function admin_menu() {
 }
 
 /**
- * Modify the columns in the admin interface_exists
+ * Modify the columns in the admin interface.
+ *
+ * @param string[] $columns The column header labels keyed by column ID.
+ * @return string[] The column header labels keyed by column ID.
  */
-function columns( $columns ) {
-	$columns = array(
-		'cb'               => '<input type="checkbox" />',
-		'name'             => __( 'Name' ),
-		'image'            => __( 'Image' ),
-		'library_use_only' => __( 'Library Use Only' ),
-		'description'      => __( 'Description' ),
-		'slug'             => __( 'Slug' ),
-		'posts'            => __( 'Count' ),
+function manage_edit_columns( array $columns ) {
+	$first_columns  = array_slice( $columns, 0, 2 );
+	$last_columns   = array_slice( $columns, 2 );
+	$custom_columns = array(
+		Access_Category::$tax_name . '-image'            => __( 'Image' ),
+		Access_Category::$tax_name . '-library-use-only' => __( 'Library Use Only' ),
 	);
-	return $columns;
+	return array_merge( $first_columns, $custom_columns, $last_columns );
 }
 
 /**
- * Return content for custom columns
+ * Return content for custom columns.
+ *
+ * @wp-hook manage_{$this->screen->taxonomy}_custom_column
+ * @see https://developer.wordpress.org/reference/hooks/manage_this-screen-taxonomy_custom_column/
+ * @param string $value The value for this column. This will be ignored.
+ * @param string $column_name Name of the column.
+ * @param int    $term_id Term ID.
  */
-function column_content( $value, $column_name = null, $term_id ) {
-	$term_meta = get_option( "taxonomy_{$term_id}" );
+function column_content( string $value, string $column_name, int $term_id ) {
+	$term_meta = get_tax_term_meta( $term_id );
+
 	switch ( $column_name ) {
-		case 'image':
+		case Access_Category::$tax_name . '-image':
 			if ( isset( $term_meta['image'] ) ) {
 				$value = wp_get_attachment_image( $term_meta['image'], array( 32, 32 ) );
 			}
 			break;
-		case 'library_use_only':
+
+		case Access_Category::$tax_name . '-library-use-only':
 			if ( isset( $term_meta['library_use_only'] ) ) {
 				$value = ( $term_meta['library_use_only'] ? 'yes' : 'no' );
 			} else {
@@ -134,50 +144,70 @@ function column_content( $value, $column_name = null, $term_id ) {
 }
 
 /**
- * Save access category custom fields
+ * Save Access_Category custom fields to the database.
+ *
+ * @param int $term_id Term ID.
  */
-function save( $term_id ) {
+function save( int $term_id ) {
 	if ( ! isset( $_POST['term_meta'] ) ) {
 		return;
 	}
 
+	if ( ! current_user_can( 'edit_term', $term_id ) ) {
+		return;
+	}
+
+	if ( ! isset( $_POST['library-databases-access-category-nonce'] ) ) {
+		return;
+	}
+
+	// Unslashing and sanitizing are not necessary for wp_verify_nonce().
+	// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+	// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+	if ( ! wp_verify_nonce( $_POST['library-databases-access-category-nonce'], 'edit-library-databases-access-category' ) ) {
+		return;
+	}
+	// phpcs:enable
+
 	$tax_name  = Access_Category::$tax_name;
-	$term_meta = get_option( "taxonomy_{$term_id}" );
+	$term_meta = get_tax_term_meta( $term_id );
 
 	if ( isset( $_POST['term_meta']['library_use_only'] ) ) {
-		$term_meta['library_use_only'] = true;
+		update_tax_term_meta( $term_id, 'library_use_only', true );
 	} else {
-		$term_meta['library_use_only'] = false;
+		update_tax_term_meta( $term_id, 'library_use_only', false );
 	}
 
 	if ( isset( $_POST['term_meta']['image'] ) && is_numeric( $_POST['term_meta']['image'] ) ) {
-		$term_meta['image'] = intval( $_POST['term_meta']['image'] );
+		update_tax_term_meta( $term_id, 'image', intval( $_POST['term_meta']['image'] ) );
 	} else {
-		$term_meta['image'] = null;
+		update_tax_term_meta( $term_id, 'image', null );
 	}
-
-	// Save the option array.
-	update_option( "taxonomy_{$term_id}", $term_meta );
 }
 
 /**
  * Hook for term creation
+ *
+ * @param int $term_id Term ID.
  */
-function create( $term_id ) {
+function create( int $term_id ) {
 	save( $term_id );
 }
 
 /**
  * Hook for term edit
+ *
+ * @param int $term_id Term ID.
  */
-function edit( $term_id ) {
+function edit( int $term_id ) {
 	save( $term_id );
 }
 
 /**
- * Returns the html for the custom fields in the new database access category box
+ * Echos the html for the custom fields in the new access category box.
  */
 function add_form_fields() {
+	wp_nonce_field( 'edit-library-databases-access-category', 'library-databases-access-category-nonce' );
 	?>
 	<div class="form-field">
 		<label for="choose-image-button">
@@ -206,10 +236,11 @@ function add_form_fields() {
  * Returns the html for the custom fields in the edit database access category
  * metabox.
  *
- * @param WP_Term $term The term being edited.
+ * @param \WP_Term $term The term being edited.
  */
-function edit_form_fields( $term ) {
-	$term_meta = get_option( "taxonomy_{$term->term_id}" );
+function edit_form_fields( \WP_Term $term ) {
+	$category = new Access_Category( $term );
+	wp_nonce_field( 'edit-library-databases-access-category', 'library-databases-access-category-nonce' );
 	?>
 	<tr class="form-field">
 		<th scope="row">
@@ -227,7 +258,7 @@ function edit_form_fields( $term ) {
 		</th>
 		<td>
 			<label>
-				<input type="checkbox" name="term_meta[library_use_only]" <?php checked( ! empty( $term_meta['library_use_only'] ) ); ?>/>
+				<input type="checkbox" name="term_meta[library_use_only]" <?php checked( $category->is_restricted_by_ip() ); ?>/>
 				<?php esc_html_e( 'In Library Only' ); ?>
 				<p>
 					<?php esc_html_e( '(set library IP addresses under Settings > Library Databases)' ); ?>
@@ -241,33 +272,21 @@ function edit_form_fields( $term ) {
 /**
  * Outputs the form fields used to add or remove images for the access category.
  *
- * @param WP_Term $term If provided, echo_image_form_fields will use the image
+ * @param \WP_Term $term If provided, echo_image_form_fields will use the image
  * set for this term for its default value.
  */
-function echo_image_form_fields( $term = null ) {
+function echo_image_form_fields( \WP_Term $term = null ) {
+	$term_image = null;
 	if ( $term ) {
-		$term_meta = get_option( "taxonomy_{$term->term_id}" );
-		$has_image = isset( $term_meta['image'] );
-	} else {
-		$term_meta = array();
-		$has_image = false;
+		$term_image = get_tax_term_meta( $term->term_id, 'image' );
 	}
+	echo '<input type="hidden" class="metaValueField" id="term_meta[image]" name="term_meta[image]" ';
+	echo sprintf( 'value="%s"', esc_attr( $term_image ) );
+	echo '/>';
 	?>
-	<input type="hidden"
-		class="metaValueField"
-		id="term_meta[image]"
-		name="term_meta[image]"
-		value="
-		<?php
-		if ( $has_image ) {
-			echo esc_attr( $term_meta['image'] );
-		}
-		?>
-		"
-	/>
 	<div id="lib-databases-thumbnail">
-		<?php if ( $has_image ) : ?>
-			<?php echo wp_get_attachment_image( $term_meta['image'] ); ?>
+		<?php if ( $term_image ) : ?>
+			<?php echo wp_get_attachment_image( $term_image ); ?>
 		<?php endif; ?>
 	</div>
 	<input id="choose-image-button" type="button" value="Choose File" />

@@ -5,6 +5,7 @@
  * @package LibraryDatabases
  */
 
+/** Make sure the Database class definition has been loaded. */
 require_once dirname( __FILE__ ) . '/../class-database.php';
 
 use ForbesLibrary\WordPress\LibraryDatabases\Database;
