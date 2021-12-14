@@ -146,40 +146,26 @@ function column_content( string $value, string $column_name, int $term_id ) {
 /**
  * Save Access_Category custom fields to the database.
  *
- * @param int $term_id Term ID.
+ * @param int   $term_id Term ID.
+ * @param array $term_meta An array of metadata to be saved.
  */
-function save( int $term_id ) {
-	if ( ! isset( $_POST['term_meta'] ) ) {
-		return;
-	}
-
+function save( int $term_id, $term_meta ) {
 	if ( ! current_user_can( 'edit_term', $term_id ) ) {
-		return;
+		wp_die(
+			esc_html__( 'You do not have permission to edit this.' ),
+			esc_html__( 'Something went wrong.' ),
+			403
+		);
 	}
 
-	if ( ! isset( $_POST['library-databases-access-category-nonce'] ) ) {
-		return;
-	}
-
-	// Unslashing and sanitizing are not necessary for wp_verify_nonce().
-	// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-	// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-	if ( ! wp_verify_nonce( $_POST['library-databases-access-category-nonce'], 'edit-library-databases-access-category' ) ) {
-		return;
-	}
-	// phpcs:enable
-
-	$tax_name  = Access_Category::$tax_name;
-	$term_meta = get_tax_term_meta( $term_id );
-
-	if ( isset( $_POST['term_meta']['library_use_only'] ) ) {
+	if ( isset( $term_meta['library_use_only'] ) ) {
 		update_tax_term_meta( $term_id, 'library_use_only', true );
 	} else {
 		update_tax_term_meta( $term_id, 'library_use_only', false );
 	}
 
-	if ( isset( $_POST['term_meta']['image'] ) && is_numeric( $_POST['term_meta']['image'] ) ) {
-		update_tax_term_meta( $term_id, 'image', intval( $_POST['term_meta']['image'] ) );
+	if ( isset( $term_meta['image'] ) && is_numeric( $term_meta['image'] ) ) {
+		update_tax_term_meta( $term_id, 'image', intval( $term_meta['image'] ) );
 	} else {
 		update_tax_term_meta( $term_id, 'image', null );
 	}
@@ -191,7 +177,33 @@ function save( int $term_id ) {
  * @param int $term_id Term ID.
  */
 function create( int $term_id ) {
-	save( $term_id );
+	if ( ! isset( $_POST['library-databases-access-category-nonce'] ) ) {
+		wp_die(
+			esc_html__( 'Security Error: nonce is missing.' ),
+			esc_html__( 'Something went wrong.' ),
+			403
+		);
+	}
+
+	// Unslashing and sanitizing are not necessary for wp_verify_nonce().
+	// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+	// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+	$nonce = wp_verify_nonce(
+		$_POST['library-databases-access-category-nonce'],
+		'access-category/add'
+	);
+	if ( ! $nonce ) {
+		wp_nonce_ays( 'access-category/add' );
+	}
+	// phpcs:enable
+
+	if ( ! isset( $_POST['term_meta'] ) ) {
+		return;
+	}
+
+	// We leave the burden of handling the passed data safely to save().
+	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+	save( $term_id, wp_unslash( $_POST['term_meta'] ) );
 }
 
 /**
@@ -200,14 +212,46 @@ function create( int $term_id ) {
  * @param int $term_id Term ID.
  */
 function edit( int $term_id ) {
-	save( $term_id );
+	if ( ! isset( $_POST['library-databases-access-category-nonce'] ) ) {
+		wp_die(
+			esc_html__( 'Security Error: nonce is missing.' ),
+			esc_html__( 'Something went wrong.' ),
+			403
+		);
+	}
+
+	// Unslashing and sanitizing are not necessary for wp_verify_nonce().
+	// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+	// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+	$nonce = wp_verify_nonce(
+		$_POST['library-databases-access-category-nonce'],
+		'access-category/edit' . $term_id
+	);
+	if ( ! $nonce ) {
+		wp_nonce_ays( 'access-category/edit' . $term_id );
+	}
+	// phpcs:enable
+
+	if ( ! isset( $_POST['term_meta'] ) ) {
+		return;
+	}
+
+	// We leave the burden of handling the passed data safely to save().
+	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+	save( $term_id, wp_unslash( $_POST['term_meta'] ) );
 }
 
 /**
  * Echos the html for the custom fields in the new access category box.
+ *
+ * @wp-hook "{$taxonomy}_add_form_fields"
+ * @see https://developer.wordpress.org/reference/hooks/taxonomy_add_form_fields/
  */
 function add_form_fields() {
-	wp_nonce_field( 'edit-library-databases-access-category', 'library-databases-access-category-nonce' );
+	wp_nonce_field(
+		'access-category/add',
+		'library-databases-access-category-nonce'
+	);
 	?>
 	<div class="form-field">
 		<label for="choose-image-button">
@@ -240,7 +284,10 @@ function add_form_fields() {
  */
 function edit_form_fields( \WP_Term $term ) {
 	$category = new Access_Category( $term );
-	wp_nonce_field( 'edit-library-databases-access-category', 'library-databases-access-category-nonce' );
+	wp_nonce_field(
+		'access-category/edit' . $term->term_id,
+		'library-databases-access-category-nonce'
+	);
 	?>
 	<tr class="form-field">
 		<th scope="row">
