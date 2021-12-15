@@ -1,4 +1,3 @@
-- Make sure nonces work for creation and edit
 - Postfix is currently only used to add "with bpl card" to database names in
   select menu. This is not documented. Is this the right tool? If so,
   document it. If not, fix it.
@@ -7,6 +6,3 @@
 - make lists of tests
 - make sure all ids are ints using intval to avoid errors
 - make sure all database queries return a sane number of results
-- sanitize shortcode attributes
-- sanitize options
-- sanitize post/taxonomy custom fields

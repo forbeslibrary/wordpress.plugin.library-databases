@@ -1,0 +1,51 @@
+#database-url-meta label {
+  display: block;
+  margin-top: 1em;
+}
+
+#database-url-meta label:first-child {
+  margin-top: 0;
+}
+
+.column-lib_database_research_areas {
+  width: 8em;
+}
+
+.column-lib_databases_categories-image {
+  width: 40px; /* the image itself is 32px */
+}
+
+.column-lib_databases_categories-library-use-only {
+  width: 4em;
+}
+
+.taxonomy-lib_databases_categories .wp-list-table {
+  table-layout: auto;
+}
+
+.taxonomy-lib_databases_categories .column-slug {
+  width: auto;
+}
+
+/* this column created by User Access Manager plugin */
+.column-uam_access {
+  width: 8em;
+}
+
+#dashboard_right_now .lib_databases-count a:before,
+#dashboard_right_now .lib_databases-count span:before {
+  content: "\f319";
+}
+
+.taxonomy-lib_database_categories .form-field .label {
+  font-weight: bold;
+}
+
+.taxonomy-lib_database_categories .form-wrap .form-field {
+  margin: 0 0 0.25em;
+  padding: 0;
+}
+
+.taxonomy-lib_database_categories #tag-description {
+  height: 4em;
+}

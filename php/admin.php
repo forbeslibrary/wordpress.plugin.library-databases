@@ -8,7 +8,6 @@
 namespace ForbesLibrary\WordPress\LibraryDatabases;
 
 add_action( 'add_meta_boxes', __NAMESPACE__ . '\add_meta_boxes' );
-add_action( 'admin_head', __NAMESPACE__ . '\admin_css' );
 add_action( 'admin_init', __NAMESPACE__ . '\admin_init' );
 add_action( 'admin_menu', __NAMESPACE__ . '\add_settings_page' );
 add_action( 'dashboard_glance_items', __NAMESPACE__ . '\add_glance_items' );
@@ -67,7 +66,10 @@ function admin_init() {
 
 	register_setting(
 		'lib_databases_settings_page',
-		'lib_databases_settings_ip_addresses'
+		'lib_databases_settings_ip_addresses',
+		array(
+			'sanitize_callback' => __NAMESPACE__ . '\sanitize_ip_addresses_field'
+		)
 	);
 }
 
@@ -108,69 +110,6 @@ function output_ip_addresses_form_field() {
 }
 
 /**
- * Adds custom CSS to admin pages.
- *
- * @wp-hook admin_head
- */
-function admin_css() {
-	?>
-	<style>
-		#database-url-meta label {
-			display: block;
-			margin-top: 1em;
-		}
-
-		#database-url-meta label:first-child {
-			margin-top: 0;
-		}
-
-		.column-lib_database_research_areas {
-			width: 8em;
-		}
-
-		.column-lib_databases_categories-image {
-			width: 40px; /* the image itself is 32px */
-		}
-
-		.column-lib_databases_categories-library-use-only {
-			width: 4em;
-		}
-
-		.taxonomy-lib_databases_categories .wp-list-table {
-			table-layout: auto;
-		}
-
-		.taxonomy-lib_databases_categories .column-slug {
-			width: auto;
-		}
-
-		/* this column created by User Access Manager plugin */
-		.column-uam_access {
-			width: 8em;
-		}
-
-		#dashboard_right_now .lib_databases-count a:before,
-		#dashboard_right_now .lib_databases-count span:before {
-			content: "\f319";
-		}
-
-		.taxonomy-lib_database_categories .form-field .label {
-			font-weight: bold;
-		}
-
-		.taxonomy-lib_database_categories .form-wrap .form-field {
-			margin: 0 0 0.25em;
-			padding: 0;
-		}
-
-		.taxonomy-lib_database_categories #tag-description {
-			height: 4em;
-		}
-	</style>
-	<?php
-}
-
-/**
  * Add information about lib_databases to the glance items.
  *
  * @wp-hook dashboard_glance_items
@@ -199,18 +138,30 @@ function save_details() {
 	}
 
 	if ( ! current_user_can( 'edit_post', $post->ID ) ) {
-		return;
+		wp_die(
+			esc_html__( 'You do not have permission to edit this.' ),
+			esc_html__( 'Something went wrong.' ),
+			403
+		);
 	}
 
 	if ( ! isset( $_POST['library-databases-urls-metabox-nonce'] ) ) {
-		return;
+		wp_die(
+			esc_html__( 'Security Error: nonce is missing.' ),
+			esc_html__( 'Something went wrong.' ),
+			403
+		);
 	}
 
 	// Unslashing and sanitizing are not necessary for wp_verify_nonce().
 	// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 	// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-	if ( ! wp_verify_nonce( $_POST['library-databases-urls-metabox-nonce'], 'edit-library-databases-urls' ) ) {
-		return;
+	$nonce = wp_verify_nonce(
+		$_POST['library-databases-urls-metabox-nonce'],
+		'library-databases/edit-urls' . $post->ID
+	);
+	if ( ! $nonce ) {
+		wp_nonce_ays( 'access-category/add' );
 	}
 	// phpcs:enable
 
@@ -293,7 +244,10 @@ function manage_columns( array $columns ) {
 function editbox_database_urls() {
 	global $post;
 
-	wp_nonce_field( 'edit-library-databases-urls', 'library-databases-urls-metabox-nonce' );
+	wp_nonce_field(
+		'library-databases/edit-urls' . $post->ID,
+		'library-databases-urls-metabox-nonce'
+	);
 
 	$custom = get_post_custom( $post->ID );
 	if ( isset( $custom['database_main_url'] ) ) {
@@ -315,11 +269,17 @@ function editbox_database_urls() {
 }
 
 /**
- * Enqueues scripts required for the admin interface.
+ * Enqueues scripts and styles required for the admin interface.
  *
  * @param string $hook_suffix The current admin page.
  */
 function admin_enqueue_scripts( string $hook_suffix ) {
+	wp_enqueue_style(
+		'library-databases-admin',
+		plugin_dir_url( __FILE__ ) . '../css/library-databases-admin.css',
+		array(), // No dependencies.
+		get_plugin_version()
+	);
 	wp_register_script(
 		'library-databases-admin-js',
 		plugin_dir_url( __FILE__ ) . '../js/library-databases-admin.js',
@@ -327,4 +287,15 @@ function admin_enqueue_scripts( string $hook_suffix ) {
 		get_plugin_version(),
 		true
 	);
+}
+
+/**
+ * Sanitize a textarea field leaving only line endings and characters that are
+ * valid in ip addresses.
+ *
+ * @param string $str The string to be sanitized.
+ * @return string The sanitized string.
+ */
+function sanitize_ip_addresses_field( string $str ) {
+	return trim( preg_replace( '/[^0-9\n\.]/', '', $str ) );
 }

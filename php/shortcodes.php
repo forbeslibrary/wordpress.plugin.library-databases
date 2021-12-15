@@ -44,6 +44,10 @@ function lib_database_list( $atts, ?string $content = null ) {
 		$atts
 	);
 
+	// Shortcode argument sanitization.
+	$atts['research_area']     = sanitize_title( $atts['research_area'] );
+	$atts['exclude_category']  = sanitize_title( $atts['exclude_category'] );
+
 	$the_query = make_query( $atts['research_area'], $atts['exclude_category'] );
 
 	ob_start();
@@ -97,6 +101,12 @@ function lib_database_select( $atts, ?string $content = null ) {
 		),
 		$atts
 	);
+
+	// Shortcode argument sanitization.
+	// title and select_message do not need to be sanitized here because our
+	// JavaScript will make them safe.
+	$atts['research_area']     = sanitize_title( $atts['research_area'] );
+	$atts['exclude_category']  = sanitize_title( $atts['exclude_category'] );
 
 	$unique_id = new Unique_ID();
 	$the_query = make_query( $atts['research_area'], $atts['exclude_category'] );

@@ -9,10 +9,13 @@ function createDatabaseSelectMenu(dataID) {
   var containerID   = 'lib_databases_nav_' + uniqueID;
 
   var container = document.getElementById(containerID);
+  var label = document.createElement('label');
   var select_menu = document.createElement('select');
   var select_prompt = document.createElement('option');
 
-  container.appendChild(document.createTextNode(title + ' '));
+  label.appendChild(document.createTextNode(title + ' '));
+  label.setAttribute('for', select_id);
+  container.appendChild(label);
   select_menu.id = select_id;
   select_prompt.innerHTML = selectMessage;
   select_menu.appendChild(select_prompt);

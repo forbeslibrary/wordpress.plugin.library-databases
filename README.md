@@ -5,7 +5,7 @@ This is a WordPress plugin for a library wishing to provide easy access to and o
 The plugin creates a custom post type called Library Databases. Each database has a *title*, *description*, an indication of its *availability* (available only in the library vs. availably freely on the web or with a library card) and a *primary url*. In addition, a database may have a *home use url* if the urls for using it in outside of the library differ.
 
 ### Upgrading
-As of v2.0.0 this the automatic migration from versions before v1.0.0 has been discontinued. In the unlikely event that you are upgrading from a version older than v2.0.0 be sure to upgrade to one of the 1.x.x versions before upgrading to v2.0.0.
+As of v2.0.0 the automatic migration from versions before v1.0.0 has been discontinued. In the unlikely event that you are upgrading from a version older than v2.0.0 be sure to upgrade to one of the 1.x.x versions before upgrading to v2.0.0.
 
 ### Settings
 Users with administrator access can set the IP Addresses to be considered 'in library' on the settings page found under `Settings > Library Databases`.
