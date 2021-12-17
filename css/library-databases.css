@@ -6,7 +6,8 @@
   font-size: small;
 }
 
-.lib_databases-availability-text {
+.lib_databases-availability-text,
+.lib_databases-help-text {
   font-style: italic;
   color: #555;
 }

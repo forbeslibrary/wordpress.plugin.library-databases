@@ -5,3 +5,4 @@
   on archive pages.
 - Update documentation regarding templates and the lib_database_use_plugin_templates filters
 - Rewrite hook code to use closures in categories-admin
+- Create build process with mimification and automatic version numbers

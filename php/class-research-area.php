@@ -61,6 +61,10 @@ class Research_Area {
 						'singular_label' => 'Research Area',
 						'hierarchical'   => true,
 						'show_ui'        => true,
+						'rewrite'        => array(
+							'slug'       => 'research-area',
+							'with_front' => false,
+						),
 					)
 				);
 			}

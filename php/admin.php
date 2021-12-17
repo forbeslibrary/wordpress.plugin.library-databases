@@ -55,9 +55,9 @@ add_action(
 			// ID.
 			'default',
 			// Title.
-			__( 'In Library Use' ),
+			'',
 			// Callback. Function that echos out any content at the top of the section.
-			null, // Output nothing.
+			'__return_empty_string', // Output nothing.
 			// Page.
 			'lib_databases_settings_page'
 		);
@@ -66,9 +66,20 @@ add_action(
 			// ID.
 			'lib_databases_settings_ip_addresses',
 			// Title.
-			__( 'Library Databases In Library Use IP Addresses' ),
+			__( 'In Library Use IP Addresses' ),
 			// Callback.
 			__NAMESPACE__ . '\output_ip_addresses_form_field',
+			// Page.
+			'lib_databases_settings_page'
+		);
+
+		add_settings_field(
+			// ID.
+			'lib_databases_settings_help_text',
+			// Title.
+			__( 'Help Text' ),
+			// Callback.
+			__NAMESPACE__ . '\output_help_text_form_field',
 			// Page.
 			'lib_databases_settings_page'
 		);
@@ -78,6 +89,15 @@ add_action(
 			'lib_databases_settings_ip_addresses',
 			array(
 				'sanitize_callback' => __NAMESPACE__ . '\sanitize_ip_addresses_field',
+			)
+		);
+
+		register_setting(
+			'lib_databases_settings_page',
+			'lib_databases_settings_help_text',
+			array(
+				'sanitize_callback' => 'wp_kses_post',
+				'default'           => 'Contact us to learn more.',
 			)
 		);
 	}
@@ -290,11 +310,25 @@ function output_ip_addresses_form_field() {
 	<textarea
 		name="lib_databases_settings_ip_addresses"
 		id="lib_databases_settings_ip_addresses"
-		rows="8"
-		cols="20"
 		class="code"
 	><?php echo esc_textarea( get_option( 'lib_databases_settings_ip_addresses' ) ); ?></textarea>
 	<p class="description">Please enter each IP address on its own line.<p>
+	<?php
+}
+
+/**
+ * Outputs HTML for the lib_databases settings help text  field.
+ *
+ * This is a callback function for the WordPress Settings API
+ */
+function output_help_text_form_field() {
+	?>
+	<textarea
+		name="lib_databases_settings_help_text"
+		id="lib_databases_settings_help_text"
+		class="code"
+	><?php echo esc_textarea( get_option( 'lib_databases_settings_help_text' ) ); ?></textarea>
+	<p class="description">Text to be displayed on databases pages. HTML is allowed.<p>
 	<?php
 }
 

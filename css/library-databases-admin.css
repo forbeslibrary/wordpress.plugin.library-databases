@@ -66,3 +66,8 @@
 #lib-databases-thumbnail {
   font-weight: 700;
 }
+
+.settings_page_lib_databases_settings_page textarea {
+  width: 90%;
+  height: 10em;
+}
