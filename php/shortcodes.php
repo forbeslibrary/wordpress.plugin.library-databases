@@ -10,21 +10,21 @@ namespace ForbesLibrary\WordPress\LibraryDatabases\Shortcodes;
 /** Make sure the Unique_ID class definition has been loaded. */
 require_once 'class-unique-id.php';
 
-/** Make sure the Database class definition has been loaded. */
-require_once 'class-database.php';
-
 use ForbesLibrary\WordPress\LibraryDatabases\Unique_ID;
 use ForbesLibrary\WordPress\LibraryDatabases\Database;
+use ForbesLibrary\WordPress\LibraryDatabases\Access_Category;
+use ForbesLibrary\WordPress\LibraryDatabases\Research_Area;
 use WP_Query;
 
 /**
- * A shortcode for listing lib_databases.
+ * The lib_database_list shortcode, for listing lib_databases.
  *
  * Accepted shortcode attributes are:
  * - `research_area=slug` show only databases in the research area with the
  *   given slug
  * - `exclude_category=slug` show only databases which are not in the category
  *   with the given slug
+ * - `count` The number of databases to return (defaults to 200)
  *
  * @wp-hook add_shortcode
  * @param array|string $atts An associative array of attributes set on the
@@ -40,15 +40,17 @@ function lib_database_list( $atts, ?string $content = null ) {
 		array(
 			'research_area'    => null,
 			'exclude_category' => null,
+			'count'            => 200,
 		),
 		$atts
 	);
 
 	// Shortcode argument sanitization.
-	$atts['research_area']     = sanitize_title( $atts['research_area'] );
-	$atts['exclude_category']  = sanitize_title( $atts['exclude_category'] );
+	$atts['research_area']    = sanitize_title( $atts['research_area'] );
+	$atts['exclude_category'] = sanitize_title( $atts['exclude_category'] );
+	$atts['count']            = intval( $atts['count'] );
 
-	$the_query = make_query( $atts['research_area'], $atts['exclude_category'] );
+	$the_query = make_query( $atts['research_area'], $atts['exclude_category'], $atts['count'] );
 
 	ob_start();
 	if ( $the_query->have_posts() ) {
@@ -66,7 +68,7 @@ function lib_database_list( $atts, ?string $content = null ) {
 }
 
 /**
- * This shortcode creates a select menu of database titles.
+ * The lib_database_select shortcode, to create a select menu of database titles.
  *
  * We don't actually output the HTML for the select_menu, which would be useless
  * without JavaScript. Instead we output a single <div> and the a <script> with
@@ -81,6 +83,7 @@ function lib_database_list( $atts, ?string $content = null ) {
  *   given slug
  * - `exclude_category=slug` show only databases which are not in the category
  *   with the given slug
+ * - `count` The number of databases to return (defaults to 200)
  *
  * @wp-hook add_shortcode
  * @param array|string $atts An associative array of attributes set on the
@@ -98,6 +101,7 @@ function lib_database_select( $atts, ?string $content = null ) {
 			'select_message'   => 'Select a Database',
 			'research_area'    => null,
 			'exclude_category' => null,
+			'count'            => 200,
 		),
 		$atts
 	);
@@ -105,11 +109,12 @@ function lib_database_select( $atts, ?string $content = null ) {
 	// Shortcode argument sanitization.
 	// title and select_message do not need to be sanitized here because our
 	// JavaScript will make them safe.
-	$atts['research_area']     = sanitize_title( $atts['research_area'] );
-	$atts['exclude_category']  = sanitize_title( $atts['exclude_category'] );
+	$atts['research_area']    = sanitize_title( $atts['research_area'] );
+	$atts['exclude_category'] = sanitize_title( $atts['exclude_category'] );
+	$atts['count']            = intval( $atts['count'] );
 
 	$unique_id = new Unique_ID();
-	$the_query = make_query( $atts['research_area'], $atts['exclude_category'] );
+	$the_query = make_query( $atts['research_area'], $atts['exclude_category'], $atts['count'] );
 	$menu_data = prepare_data_for_select_menu( $the_query );
 
 	wp_enqueue_script( 'library-databases-select-menu' );
@@ -137,23 +142,32 @@ function lib_database_select( $atts, ?string $content = null ) {
 /**
  * Returns the WP_Query object used by our shortcodes.
  *
+ * We used to return all databases, which had the potential to be very slow. We
+ * now require an explicit count and default to 200 databases.
+ *
  * @param string $research_area The slug of a research_area to limit the results
- * to databases in that research area. Use null to include all research areas.
+ *               to databases in that research area. Use null to include all
+ *               research areas.
  * @param string $exclude_category The slug of an access_category to exlude. Use
- * null to not exclude any access_categories.
+ *               null to not exclude any access_categories.
+ * @param int    $count The number of databases to return. Must be > 1.
  */
-function make_query( ?string $research_area = null, ?string $exclude_category = null ) {
+function make_query( ?string $research_area = null, ?string $exclude_category = null, int $count = 200 ) {
+	if ( $count < 1 ) {
+		$count = 1;
+	}
+
 	$query_args = array(
-		'post_type'      => 'lib_databases',
+		'post_type'      => Database::POST_TYPE_KEY,
 		'orderby'        => 'title',
 		'order'          => 'ASC',
-		'posts_per_page' => -1,
+		'posts_per_page' => $count,
 	);
 
 	if ( $research_area ) {
 		$query_args['tax_query'] = array(
 			array(
-				'taxonomy'         => 'lib_databases_research_areas',
+				'taxonomy'         => Research_Area::TAX_NAME,
 				'field'            => 'slug',
 				'include_children' => false,
 				'terms'            => $research_area,
@@ -164,7 +178,7 @@ function make_query( ?string $research_area = null, ?string $exclude_category = 
 	if ( $exclude_category ) {
 		$query_args['tax_query'] = array(
 			array(
-				'taxonomy'         => 'lib_databases_categories',
+				'taxonomy'         => Access_Category::TAX_NAME,
 				'field'            => 'slug',
 				'include_children' => false,
 				'terms'            => $exclude_category,
@@ -196,15 +210,9 @@ function prepare_data_for_select_menu( \WP_Query $query ) : array {
 			$query->the_post();
 			$database    = Database::get_object( get_post() );
 			$menu_option = array(
-				'title' => get_the_title(),
+				'title' => $database->get_title_for_select_menu(),
 				'url'   => $database->get_database_url(),
 			);
-
-			$postfix = $database->get_category_title_postfix();
-
-			if ( $postfix ) {
-				$menu_option['title'] = $menu_option['title'] . ' ' . $postfix;
-			}
 			if ( $database->is_inaccessible() ) {
 				$menu_option['title']    = $menu_option['title'] . ' (available in library)';
 				$menu_option['disabled'] = true;

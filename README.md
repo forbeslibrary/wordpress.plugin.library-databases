@@ -16,6 +16,8 @@ To include a list of databases on a page use the shortcode `[lib_database_list]`
 Both shortcodes take the following optional arguments:
 - `research_area=slug` show only databases in the research area with the given slug
 - `exclude_category=slug` show only databases which are not in the category with the given slug
+- `count` The number of databases to return (defaults to 200)
+
 
 The `[lib_database_select]` shortcode also takes two additional optional arguments:
 

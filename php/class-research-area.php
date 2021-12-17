@@ -11,6 +11,9 @@
 
 namespace ForbesLibrary\WordPress\LibraryDatabases;
 
+use ForbesLibrary\WordPress\LibraryDatabases\Database;
+
+
 /**
  * A helpful wrapper class around the lib_databases_research_areas custom taxonomy.
  */
@@ -20,7 +23,7 @@ class Research_Area {
 	 *
 	 * @var string
 	 */
-	public static $tax_name = 'lib_databases_research_areas';
+	public const TAX_NAME = 'lib_databases_research_areas';
 
 	/**
 	 * The term_id of this Research_Area instance.
@@ -44,25 +47,23 @@ class Research_Area {
 	}
 
 	/**
-	 * Hook into WordPress to setup this taxonomy.
+	 * Hook into WordPress to register this taxonomy.
 	 */
 	public static function register_wp_hooks() {
-		add_action( 'init', array( __class__, 'register_taxonomy' ) );
-	}
-
-	/**
-	 * Register the taxonomy
-	 */
-	public static function register_taxonomy() {
-		register_taxonomy(
-			self::$tax_name,
-			'lib_databases',
-			array(
-				'label'          => 'Research Areas',
-				'singular_label' => 'Research Area',
-				'hierarchical'   => true,
-				'show_ui'        => true,
-			)
+		add_action(
+			'init',
+			function () {
+				register_taxonomy(
+					self::TAX_NAME,
+					Database::POST_TYPE_KEY,
+					array(
+						'label'          => 'Research Areas',
+						'singular_label' => 'Research Area',
+						'hierarchical'   => true,
+						'show_ui'        => true,
+					)
+				);
+			}
 		);
 	}
 }

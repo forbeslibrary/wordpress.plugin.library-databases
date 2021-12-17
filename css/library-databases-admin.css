@@ -49,3 +49,20 @@
 .taxonomy-lib_database_categories #tag-description {
   height: 4em;
 }
+
+.column-lib_databases_categories-image img,
+#lib-databases-thumbnail img {
+  border: 1px solid #8c8f94;
+  background-color: #fff;
+}
+
+#lib-databases-thumbnail img {
+  max-width: 64px;
+  margin: 4px;
+  height: auto;
+  vertical-align: middle;
+}
+
+#lib-databases-thumbnail {
+  font-weight: 700;
+}

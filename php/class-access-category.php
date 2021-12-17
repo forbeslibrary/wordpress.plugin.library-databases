@@ -8,6 +8,7 @@
 
 namespace ForbesLibrary\WordPress\LibraryDatabases;
 
+use ForbesLibrary\WordPress\LibraryDatabases\Database;
 use function ForbesLibrary\WordPress\LibraryDatabases\Helpers\get_tax_term_meta;
 
 /**
@@ -19,7 +20,7 @@ class Access_Category {
 	 *
 	 * @var string
 	 */
-	public static $tax_name = 'lib_databases_categories';
+	public const TAX_NAME = 'lib_databases_categories';
 
 	/**
 	 * The term_id of this Access_Category instance.
@@ -43,41 +44,41 @@ class Access_Category {
 	}
 
 	/**
-	 * Hook into WordPress to setup this taxonomy.
+	 * Hook into WordPress to register this taxonomy.
+	 *
+	 * @wp-hook init
 	 */
 	public static function register_wp_hooks() {
-		add_action( 'init', array( __CLASS__, 'register_taxonomy' ) );
-	}
-
-	/**
-	 * Register the taxonomy
-	 */
-	public static function register_taxonomy() {
-		register_taxonomy(
-			self::$tax_name,
-			'lib_databases',
-			array(
-				'label'        => 'Access Categories',
-				'labels'       => array(
-					'singular_label' => 'Access Category',
-					'add_new_item'   => 'Add Access Category',
-					'edit_item'      => 'Edit Access Category',
-					'search_items'   => 'Search Access Categories',
-					'popular_items'  => null,
-				),
-				'hierarchical' => false,
-				'rewrite'      => array(
-					'slug'       => 'databases-access',
-					'with_front' => false,
-				),
-				'show_ui'      => true,
-				'capabilities' => array(
-					'manage_terms' => 'manage_options',
-					'edit_terms'   => 'manage_options',
-					'delete_terms' => 'manage_options',
-					'assign_terms' => 'edit_posts',
-				),
-			)
+		add_action(
+			'init',
+			function () {
+				register_taxonomy(
+					self::TAX_NAME,
+					Database::POST_TYPE_KEY,
+					array(
+						'label'        => 'Access Categories',
+						'labels'       => array(
+							'singular_label' => 'Access Category',
+							'add_new_item'   => 'Add Access Category',
+							'edit_item'      => 'Edit Access Category',
+							'search_items'   => 'Search Access Categories',
+							'popular_items'  => null,
+						),
+						'hierarchical' => false,
+						'rewrite'      => array(
+							'slug'       => 'databases-access',
+							'with_front' => false,
+						),
+						'show_ui'      => true,
+						'capabilities' => array(
+							'manage_terms' => 'manage_options',
+							'edit_terms'   => 'manage_options',
+							'delete_terms' => 'manage_options',
+							'assign_terms' => 'edit_posts',
+						),
+					)
+				);
+			}
 		);
 	}
 
@@ -88,7 +89,7 @@ class Access_Category {
 	 * objects!)
 	 */
 	public static function get_terms() {
-		return get_terms( self::$tax_name, array( 'hide_empty' => 0 ) );
+		return get_terms( self::TAX_NAME, array( 'hide_empty' => 0 ) );
 	}
 
 	/**
@@ -104,7 +105,7 @@ class Access_Category {
 	 * Returns the description for this Access_Category.
 	 */
 	public function get_description() {
-		return term_description( $this->term_id, self::$tax_name );
+		return term_description( $this->term_id, self::TAX_NAME );
 	}
 
 	/**
@@ -123,7 +124,7 @@ class Access_Category {
 		if ( $term_image_id ) {
 			return wp_get_attachment_image(
 				$term_image_id,
-				'full',
+				'thumbnail',
 				'true',
 				array(
 					'class' => 'lib_databases_category_image',
@@ -143,7 +144,14 @@ class Access_Category {
 	}
 
 	/**
-	 * Returns the title postfix for select menus for this Access_Category
+	 * Returns the title postfix for select menus for this Access_Category.
+	 *
+	 * The title postfix is added to the title of databases in the select menu
+	 * to provide information to the library patron about the access requirements
+	 * for the database. This will be the only information about the
+	 * Access_Category visible to the patron in the select menu.
+	 *
+	 * @return string Postfix.
 	 */
 	public function get_postfix() {
 		$postfix = get_tax_term_meta( $this->term_id, 'postfix' );

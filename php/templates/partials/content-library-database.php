@@ -27,39 +27,31 @@ $content_array = get_extended( $post->post_content );
 		<span class="parenthetical"> (available in library)</span>
 		</h2>
 	<?php else : ?>
-		<h2 class="entry-title">
+		<h2 class="post-title">
 		<a href="<?php $database->show_database_url(); ?>">
-			<?php
-			if ( has_post_thumbnail( $post->ID ) ) {
-				$image_attributes = wp_get_attachment_image_src( get_post_thumbnail_id(), 'thumbnail' );
-				echo sprintf(
-					'<img src="%s" class="lib_database_feature_icon" alt="%s">',
-					esc_url( $image_attributes[0] ),
-					the_title_attribute( array( 'echo' => false ) ),
-				);
-			} else {
-				the_title();
-			}
-			?>
+			<?php the_title(); ?>
 		</a>
 		</h2>
 	<?php endif; ?>
 	<div class="quick_links">
-	<span class="permalink"><a href="<?php the_permalink(); ?>">🔗 permalink</a></span>
-	<?php if ( ! $database->is_inaccessible() ) : ?>
-		<span class="database-link">
-			<a href="<?php $database->show_database_url(); ?>">
-				↗ visit <?php the_title(); ?>
-			</a>
-		</span>
-	<?php endif; ?>
-	<?php if ( $content_array['extended'] && ! $more ) : ?>
-		<span class="learn-more-link"><a href="<?php the_permalink(); ?>">❓ learn more</a></span>
-	<?php endif; ?>
+		<span class="permalink"><a href="<?php the_permalink(); ?>">🔗 permalink</a></span>
+		<?php if ( ! $database->is_inaccessible() ) : ?>
+			<span class="database-link">
+				<a href="<?php $database->show_database_url(); ?>">
+					↗ visit <?php the_title(); ?>
+				</a>
+			</span>
+		<?php endif; ?>
+		<?php if ( $content_array['extended'] && ! $more ) : ?>
+			<span class="learn-more-link"><a href="<?php the_permalink(); ?>">❓ learn more</a></span>
+		<?php endif; ?>
+		<?php if ( is_user_logged_in() ) : ?>
+			<span class="edit-link"><?php edit_post_link( 'Edit Database' ); ?></span>
+		<?php endif; ?>
 	</div>
 	</div>
 </header>
-<div class="entry-content">
+<div class="post-content">
 	<?php
 	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	echo apply_filters( 'the_content', wp_kses_post( $content_array['main'] ) );
@@ -70,13 +62,10 @@ $content_array = get_extended( $post->post_content );
 	</div>
 	<?php endif; ?>
 	<?php
-	if ( $more ) {
+	if ( $more && $content_array['extended'] ) {
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo apply_filters( 'the_content', wp_kses_post( $content_array['extended'] ) );
 	}
 	?>
 </div>
-<?php if ( is_user_logged_in() ) : ?>
-	<footer class="entry-utility"><span class="edit-link"><?php edit_post_link( 'Edit Database' ); ?></span></footer>
-<?php endif; ?>
 </article>

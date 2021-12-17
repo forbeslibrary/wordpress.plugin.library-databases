@@ -14,6 +14,12 @@ use function ForbesLibrary\WordPress\LibraryDatabases\Helpers\user_in_library;
  * A helpful wrapper class around the lib_databases custom post type.
  */
 class Database {
+	/**
+	 * This is the internal post type key passed to register_post_type().
+	 *
+	 * @var string
+	 */
+	public const POST_TYPE_KEY = 'lib_databases';
 
 	/**
 	 * The WP_Post object for this database.
@@ -29,6 +35,51 @@ class Database {
 	 */
 	public function __construct( $post ) {
 		$this->post_object = get_post( $post );
+	}
+
+	/**
+	 * Hook into WordPress to register this custom post type.
+	 *
+	 * @wp-hook init
+	 */
+	public static function register_wp_hooks() {
+		add_action(
+			'init',
+			function () {
+				$labels = array(
+					'name'               => __( 'Databases' ),
+					'singular_name'      => __( 'Database' ),
+					'add_new'            => _x( 'Add New', 'database' ),
+					'add_new_item'       => __( 'Add New Database' ),
+					'edit_item'          => __( 'Edit Database' ),
+					'new_item'           => __( 'New Database' ),
+					'view_item'          => __( 'View Database Page' ),
+					'search_items'       => __( 'Search Databases' ),
+					'not_found'          => __( 'Nothing found' ),
+					'not_found_in_trash' => __( 'Nothing found in Trash' ),
+					'parent_item_colon'  => '',
+				);
+
+				$args = array(
+					'has_archive'        => true,
+					'labels'             => $labels,
+					'public'             => true,
+					'publicly_queryable' => true,
+					'show_ui'            => true,
+					'query_var'          => true,
+					'rewrite'            => array(
+						'slug'       => 'databases',
+						'with_front' => false,
+					),
+					'capability_type'    => 'post',
+					'hierarchical'       => false,
+					'menu_icon'          => 'dashicons-admin-site',
+					'menu_position'      => 5, // After Posts but before Media.
+					'supports'           => array( 'title', 'editor' ),
+				);
+				register_post_type( self::POST_TYPE_KEY, $args );
+			}
+		);
 	}
 
 	/**
@@ -76,7 +127,7 @@ class Database {
 	 * @return Access_Category|null
 	 */
 	public function get_category() {
-		$postterms = get_the_terms( $this->post_object->ID, Access_Category::$tax_name );
+		$postterms = get_the_terms( $this->post_object->ID, Access_Category::TAX_NAME );
 
 		if ( is_array( $postterms ) ) {
 			return new Access_Category( array_pop( $postterms ) );
@@ -128,11 +179,18 @@ class Database {
 	}
 
 	/**
-	 * Returns the title postfix for select menus for the lib_databases_categories
-	 * term associated with this database.
+	 * Returns the title as it should appear in a select menu.
+	 *
+	 * @return string The title with HTML tags removed and the category postfix
+	 * added, if defined.
 	 */
-	public function get_category_title_postfix() {
-		return ( $this->get_category() )->get_postfix();
+	public function get_title_for_select_menu() {
+		$title   = $this->post_object->post_title;
+		$postfix = $this->get_category()->get_postfix();
+		if ( $postfix ) {
+			$title = $title . ' (' . $postfix . ')';
+		}
+		return wp_strip_all_tags( $title );
 	}
 
 	/**

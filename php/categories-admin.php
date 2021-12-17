@@ -20,7 +20,7 @@ register_wp_hooks();
  * Hooks into WordPress to register our actions and filters.
  */
 function register_wp_hooks() {
-	$tax_name = Access_Category::$tax_name;
+	$tax_name = Access_Category::TAX_NAME;
 	$actions  = array(
 		'admin_head'                   => '\embed_uploader_code',
 		'admin_menu'                   => '\admin_menu',
@@ -54,7 +54,7 @@ function add_meta_boxes() {
 		'database-availability-meta',
 		__( 'Database Availability' ),
 		__NAMESPACE__ . '\output_database_availability_metabox',
-		'lib_databases',
+		Database::POST_TYPE_KEY,
 		'side',
 		'high',
 	);
@@ -67,7 +67,7 @@ function add_meta_boxes() {
 function output_database_availability_metabox() {
 	global $post;
 	$database = Database::get_object( $post );
-	$tax_name = Access_Category::$tax_name;
+	$tax_name = Access_Category::TAX_NAME;
 	$tax      = get_taxonomy( $tax_name );
 	$terms    = Access_Category::get_terms();
 
@@ -94,8 +94,8 @@ function output_database_availability_metabox() {
  * Removes the default lib_databases_categories metabox
  */
 function admin_menu() {
-	$tax_name = Access_Category::$tax_name;
-	remove_meta_box( "tagsdiv-{$tax_name}", 'lib_databases', 'side' );
+	$tax_name = Access_Category::TAX_NAME;
+	remove_meta_box( "tagsdiv-{$tax_name}", Database::POST_TYPE_KEY, 'side' );
 }
 
 /**
@@ -108,8 +108,8 @@ function manage_edit_columns( array $columns ) {
 	$first_columns  = array_slice( $columns, 0, 2 );
 	$last_columns   = array_slice( $columns, 2 );
 	$custom_columns = array(
-		Access_Category::$tax_name . '-image'            => __( 'Image' ),
-		Access_Category::$tax_name . '-library-use-only' => __( 'Library Use Only' ),
+		Access_Category::TAX_NAME . '-image'            => __( 'Image' ),
+		Access_Category::TAX_NAME . '-library-use-only' => __( 'Library Use Only' ),
 	);
 	return array_merge( $first_columns, $custom_columns, $last_columns );
 }
@@ -127,13 +127,13 @@ function column_content( string $value, string $column_name, int $term_id ) {
 	$term_meta = get_tax_term_meta( $term_id );
 
 	switch ( $column_name ) {
-		case Access_Category::$tax_name . '-image':
+		case Access_Category::TAX_NAME . '-image':
 			if ( isset( $term_meta['image'] ) ) {
 				$value = wp_get_attachment_image( $term_meta['image'], array( 32, 32 ) );
 			}
 			break;
 
-		case Access_Category::$tax_name . '-library-use-only':
+		case Access_Category::TAX_NAME . '-library-use-only':
 			if ( isset( $term_meta['library_use_only'] ) ) {
 				$value = ( $term_meta['library_use_only'] ? 'yes' : 'no' );
 			} else {
@@ -156,6 +156,13 @@ function save( int $term_id, $term_meta ) {
 			esc_html__( 'Something went wrong.' ),
 			403
 		);
+	}
+
+	if ( isset( $term_meta['postfix'] ) ) {
+		$postfix = sanitize_text_field( $term_meta['postfix'] );
+		update_tax_term_meta( $term_id, 'postfix', $postfix );
+	} else {
+		update_tax_term_meta( $term_id, 'postfix', null );
 	}
 
 	if ( isset( $term_meta['library_use_only'] ) ) {
@@ -254,6 +261,15 @@ function add_form_fields() {
 	);
 	?>
 	<div class="form-field">
+		<label for="postfix">
+			<?php esc_html_e( 'Title Postfix' ); ?>
+			<input type="text" name="term_meta[postfix]" id="postfix" />
+		</label>
+		<p class="description">
+			Short descriptive text to be appended to database titles in select menus, e.g. "with library card".
+		</p>
+	</div>
+	<div class="form-field">
 		<label for="choose-image-button">
 			<div class="label">
 				<?php esc_html_e( 'Image' ); ?>
@@ -291,12 +307,29 @@ function edit_form_fields( \WP_Term $term ) {
 	?>
 	<tr class="form-field">
 		<th scope="row">
+			<label for="postfix">
+				<?php esc_html_e( 'Title Postfix' ); ?>
+			</label>
+		</th>
+		<td>
+			<input type="text" name="term_meta[postfix]" id="postfix" value="<?php echo esc_attr( $category->get_postfix() ); ?>" />
+			<p class="description">
+				Short descriptive text to be appended to database titles in select menus, e.g. "with library card".
+			</p>
+		</td>
+	</tr>
+	<tr class="form-field">
+		<th scope="row">
 			<label for="choose-image-button">
 				<?php esc_html_e( 'Image' ); ?>
 			</label>
 		</th>
 		<td>
 			<?php echo_image_form_fields( $term ); ?>
+			<p class="description">
+				<?php esc_html_e( 'An image to represent this Access Category.' ); ?>
+				<?php esc_html_e( 'For best results images should be at least 64x64 pixels.' ); ?>
+			</p>
 		</td>
 	</tr>
 	<tr class="form-field">
@@ -307,7 +340,7 @@ function edit_form_fields( \WP_Term $term ) {
 			<label>
 				<input type="checkbox" name="term_meta[library_use_only]" <?php checked( $category->is_restricted_by_ip() ); ?>/>
 				<?php esc_html_e( 'In Library Only' ); ?>
-				<p>
+				<p class="description">
 					<?php esc_html_e( '(set library IP addresses under Settings > Library Databases)' ); ?>
 				</p>
 			</label>
@@ -334,6 +367,7 @@ function echo_image_form_fields( \WP_Term $term = null ) {
 	<div id="lib-databases-thumbnail">
 		<?php if ( $term_image ) : ?>
 			<?php echo wp_get_attachment_image( $term_image ); ?>
+			<?php echo esc_html( basename( get_attached_file( $term_image ) ) ); ?>
 		<?php endif; ?>
 	</div>
 	<input id="choose-image-button" type="button" value="Choose File" />
@@ -349,7 +383,7 @@ function embed_uploader_code() {
 	if ( 'term' !== $screen->base && 'edit-tags' !== $screen->base ) {
 		return;
 	}
-	if ( Access_Category::$tax_name !== $screen->taxonomy ) {
+	if ( Access_Category::TAX_NAME !== $screen->taxonomy ) {
 		return;
 	}
 	wp_enqueue_media();
