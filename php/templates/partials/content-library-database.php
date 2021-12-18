@@ -18,14 +18,20 @@ global $more;
 $database      = Database::get_object( get_post() );
 $content_array = get_extended( $post->post_content );
 ?>
-<article id="post-<?php the_ID(); ?>" class="lib_databases post hentry">
+<article id="post-<?php the_ID(); ?>" class="lib_databases post">
 <header>
 	<?php $database->show_availability_icon(); ?>
 	<div class="title_area">
 		<?php if ( $database->is_inaccessible() ) : ?>
-			<h2 class="entry-title lib_databases-database-unavailable">
-				<?php the_title(); ?>
-			<span class="parenthetical"> (available in library)</span>
+			<h2>
+				<span class="entry-title lib_databases-database-unavailable"
+					title="<?php esc_attr_e('Visit the library to use this resource');?>"
+				>
+					<?php the_title(); ?>
+				</span>
+			<span class="parenthetical">
+				(<?php esc_html_e('available in library'); ?>)
+			</span>
 			</h2>
 		<?php else : ?>
 			<h2 class="post-title">
