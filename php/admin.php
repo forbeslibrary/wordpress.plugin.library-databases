@@ -136,6 +136,13 @@ add_action(
 			return;
 		}
 
+		if ( ( ! isset( $_POST['database_main_url'] ) )
+			&& ( ! isset( $_POST['database_home_use_url'] ) )
+		) {
+			// No custom fields to save. We are done here.
+			return;
+		}
+
 		if ( ! current_user_can( 'edit_post', $post->ID ) ) {
 			wp_die(
 				esc_html__( 'You do not have permission to edit this.' ),
