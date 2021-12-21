@@ -1,14 +1,9 @@
 <?php
 /**
- * Content Library Database Template.
- *
  * Displays the content of a single library database.
  *
  * @package LibraryDatabases
  */
-
-/** Make sure the Database class definition has been loaded. */
-require_once dirname( __FILE__ ) . '/../../class-database.php';
 
 use ForbesLibrary\WordPress\LibraryDatabases\Database;
 use ForbesLibrary\WordPress\LibraryDatabases\Access_Category;
@@ -25,12 +20,12 @@ $content_array = get_extended( $post->post_content );
 		<?php if ( $database->is_inaccessible() ) : ?>
 			<h2>
 				<span class="entry-title lib_databases-database-unavailable"
-					title="<?php esc_attr_e('Visit the library to use this resource');?>"
+					title="<?php esc_attr_e( 'Visit the library to use this resource' ); ?>"
 				>
 					<?php the_title(); ?>
 				</span>
 			<span class="parenthetical">
-				(<?php esc_html_e('available in library'); ?>)
+				(<?php esc_html_e( 'available in library' ); ?>)
 			</span>
 			</h2>
 		<?php else : ?>

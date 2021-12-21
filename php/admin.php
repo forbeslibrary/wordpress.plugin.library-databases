@@ -28,16 +28,14 @@ add_action(
 			'lib_databases_settings_page',
 			// Callback.
 			function () {
-				?>
-				<h1><?php esc_html_e( 'Library Databases Settings' ); ?></h1>
-				<form method="POST" action="options.php">
-					<?php
-					settings_fields( 'lib_databases_settings_page' );
-					do_settings_sections( 'lib_databases_settings_page' );
-					submit_button();
-					?>
-				</form>
-				<?php
+				echo '<h1>';
+				esc_html_e( 'Library Databases Settings' );
+				echo '</h1>';
+				echo '<form method="POST" action="options.php">';
+				settings_fields( 'lib_databases_settings_page' );
+				do_settings_sections( 'lib_databases_settings_page' );
+				submit_button();
+				echo '</form>';
 			}
 		);
 	}

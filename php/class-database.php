@@ -225,9 +225,11 @@ class Database {
 	 * Returns a simple HTML rendering of the database.
 	 */
 	public function render() {
-		ob_start();?>
-		<?php load_template( dirname( __FILE__ ) . '/templates/partials/content-library-database.php', false ); ?>
-		<?php
+		ob_start();
+		load_template(
+			dirname( __FILE__ ) . '/template-parts/content-library-database.php',
+			false
+		);
 		return ob_get_clean();
 	}
 
