@@ -120,6 +120,26 @@ add_filter(
 );
 
 /**
+ * Use a different name for database archive pages.
+ *
+ * By default the archives page would have the title "Archives: Databases". This
+ * filter makes it just "Databases".
+ *
+ * @wp-hook get_the_archive_title
+ * @param string $title The title.
+ * @return string The modified title.
+ */
+add_filter(
+	'get_the_archive_title',
+	function ( string $title ) {
+		if ( is_post_type_archive( Database::POST_TYPE_KEY ) ) {
+			$title = post_type_archive_title( '', false );
+		}
+		return $title;
+	}
+);
+
+/**
  * Show all databases in alphabetical order on archive page.
  *
  * @wp-hook pre_get_posts
